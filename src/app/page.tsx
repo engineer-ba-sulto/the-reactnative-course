@@ -1,9 +1,7 @@
-import { Button } from "@/components/ui/button";
-
 export default function Home() {
   return (
-    <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-      <Button>Click me</Button>
+    <main className="flex flex-col justify-center items-center h-screen">
+      <h1 className="text-5xl font-bold">Top Page</h1>
     </main>
   );
 }
