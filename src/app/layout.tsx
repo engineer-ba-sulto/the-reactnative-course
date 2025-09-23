@@ -1,3 +1,4 @@
+import { Header } from "@/components/header";
 import type { Metadata } from "next";
 import { Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
@@ -23,7 +24,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" suppressHydrationWarning>
-      <body className={`${notoSansJP.className} antialiased`}>{children}</body>
+      <body className={`${notoSansJP.className} antialiased`}>
+        <Header />
+        {children}
+      </body>
     </html>
   );
 }
