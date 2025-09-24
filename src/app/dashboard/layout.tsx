@@ -1,3 +1,5 @@
+import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -13,5 +15,18 @@ export default async function DashboardLayout({
   if (!session || !session?.user) {
     redirect("/login");
   }
-  return <>{children}</>;
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      {/* サイドバーとメインコンテンツ */}
+      <div className="flex flex-1">
+        <SidebarProvider>
+          <DashboardSidebar />
+          <SidebarInset className="flex-1">
+            <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
+          </SidebarInset>
+        </SidebarProvider>
+      </div>
+    </div>
+  );
 }

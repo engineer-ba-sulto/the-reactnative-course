@@ -10,7 +10,7 @@ export async function Header() {
   });
 
   return (
-    <header className="border-b">
+    <header className="border-b h-18">
       <div className="container flex justify-between items-center p-4">
         <Link href="/" className="font-bold text-lg">
           AppName
