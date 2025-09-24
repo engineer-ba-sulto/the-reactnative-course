@@ -20,7 +20,8 @@ import { Input } from "@/components/ui/input";
 import { useFormSubmission } from "@/hooks/use-form-submission";
 import { useSignupForm } from "@/hooks/use-form-validation";
 import { cn } from "@/lib/utils";
-import { SignUpEmailInput } from "@/zod/certification";
+import { SignUpEmailInput } from "@/types/auth";
+
 import Link from "next/link";
 
 export function SigninForm({

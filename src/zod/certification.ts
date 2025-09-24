@@ -33,7 +33,3 @@ export const signInEmailSchema = z.object({
   password: z.string().min(1, "パスワードを入力してください"),
   callbackURL: z.string().url("正しいURLを入力してください").optional(),
 });
-
-// 型定義のエクスポート
-export type SignUpEmailInput = z.infer<typeof signUpEmailSchema>;
-export type SignInEmailInput = z.infer<typeof signInEmailSchema>;

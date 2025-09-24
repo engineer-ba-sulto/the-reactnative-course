@@ -1,7 +1,7 @@
 "use client";
 
 import { signInEmail, signUpEmail } from "@/actions/certification";
-import { SignInEmailInput, SignUpEmailInput } from "@/zod/certification";
+import { SignInEmailInput, SignUpEmailInput } from "@/types/auth";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";

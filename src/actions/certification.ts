@@ -1,17 +1,11 @@
 "use server";
 
 import { auth } from "@/lib/auth";
+import { AuthResult } from "@/types/auth";
 import { signInEmailSchema, signUpEmailSchema } from "@/zod/certification";
 import { revalidatePath } from "next/cache";
 
 const { headers } = await import("next/headers");
-
-// 型定義
-interface AuthResult {
-  success: boolean;
-  user?: unknown;
-  error?: string;
-}
 
 // ヘルパー関数
 function formDataToObject(formData: FormData): Record<string, string> {
