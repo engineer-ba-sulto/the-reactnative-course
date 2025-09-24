@@ -21,9 +21,9 @@ export const useFormSubmission = () => {
 
         if (result.success) {
           toast.success("ログインに成功しました");
-          router.push("/");
+          router.push("/dashboard");
         } else {
-          toast.error(result.error || "ログインに失敗しました");
+          toast.error("メールアドレスかパスワードが間違っています");
         }
       } catch (error) {
         console.error("Login error:", error);
@@ -48,7 +48,7 @@ export const useFormSubmission = () => {
 
         if (result.success) {
           toast.success("アカウント作成に成功しました");
-          router.push("/");
+          router.push("/dashboard");
         } else {
           toast.error(result.error || "アカウント作成に失敗しました");
         }
