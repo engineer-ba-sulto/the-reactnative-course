@@ -4,8 +4,7 @@ import { auth } from "@/lib/auth";
 import { AuthResult } from "@/types/auth";
 import { signInEmailSchema, signUpEmailSchema } from "@/zod/certification";
 import { revalidatePath } from "next/cache";
-
-const { headers } = await import("next/headers");
+import { headers } from "next/headers";
 
 // ヘルパー関数
 function formDataToObject(formData: FormData): Record<string, string> {
