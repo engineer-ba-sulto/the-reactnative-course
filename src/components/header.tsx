@@ -33,6 +33,9 @@ export async function Header() {
             </form>
           ) : (
             <div className="flex gap-2">
+              <Button asChild variant="outline">
+                <Link href="/signin">Signin</Link>
+              </Button>
               <Button asChild>
                 <Link href="/login">Login</Link>
               </Button>
