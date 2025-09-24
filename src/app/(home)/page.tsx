@@ -1,7 +1,15 @@
+import AppsList from "@/components/apps-list";
+import ArticlesList from "@/components/articles-list";
+import Hero from "@/components/hero";
+import WaitingList from "@/components/waiting-list";
+
 export default function Home() {
   return (
-    <main className="flex flex-col justify-center items-center h-screen">
-      <h1 className="text-5xl font-bold">Top Page</h1>
+    <main className="min-h-screen">
+      <Hero />
+      <WaitingList />
+      <ArticlesList />
+      <AppsList />
     </main>
   );
 }
