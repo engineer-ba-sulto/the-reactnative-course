@@ -1,4 +1,4 @@
-import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";

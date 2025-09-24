@@ -1,7 +1,7 @@
-import AppsList from "@/components/apps-list";
-import ArticlesList from "@/components/articles-list";
-import Hero from "@/components/hero";
-import WaitingList from "@/components/waiting-list";
+import AppsList from "@/components/AppsList";
+import ArticlesList from "@/components/ArticlesList";
+import Hero from "@/components/Hero";
+import WaitingList from "@/components/WaitingList";
 
 export default function Home() {
   return (

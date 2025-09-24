@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
-import UserDropdownMenu from "@/components/user-dropdown-menu";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import Link from "next/link";
+import UserDropdownMenu from "./UserDropdownMenu";
 
 export async function Header() {
   const session = await auth.api.getSession({

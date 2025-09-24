@@ -1,4 +1,4 @@
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/DashboardHeader";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { auth } from "@/lib/auth";
 import type { Metadata } from "next";
