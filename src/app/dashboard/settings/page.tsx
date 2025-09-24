@@ -1,3 +1,4 @@
+import { DashboardHeader } from "@/components/dashboard-header";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -8,12 +9,10 @@ export const metadata: Metadata = {
 export default async function SettingsPage() {
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">設定</h1>
-        <p className="text-muted-foreground">
-          アプリケーションの設定と環境の管理
-        </p>
-      </div>
+      <DashboardHeader
+        title={metadata.title}
+        description={metadata.description}
+      />
 
       <div className="grid gap-6">
         <div className="rounded-lg border p-6">

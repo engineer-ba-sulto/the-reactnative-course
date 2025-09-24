@@ -1,3 +1,4 @@
+import { DashboardHeader } from "@/components/dashboard-header";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -8,12 +9,10 @@ export const metadata: Metadata = {
 export default async function CoursesPage() {
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">コース</h1>
-        <p className="text-muted-foreground">
-          利用可能なコースと学習進捗の管理
-        </p>
-      </div>
+      <DashboardHeader
+        title={metadata.title}
+        description={metadata.description}
+      />
 
       <div className="grid gap-6">
         <div className="rounded-lg border p-6">
