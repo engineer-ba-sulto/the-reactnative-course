@@ -1,4 +1,5 @@
-import { signInEmail } from "@/actions/certification";
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,15 +8,32 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useFormSubmission } from "@/hooks/use-form-submission";
+import { useLoginForm } from "@/hooks/use-form-validation";
 import { cn } from "@/lib/utils";
+import { SignInEmailInput } from "@/zod/certification";
 import Link from "next/link";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const form = useLoginForm();
+  const { handleLogin, isPending } = useFormSubmission();
+
+  const onSubmit = (data: SignInEmailInput) => {
+    handleLogin(data);
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -24,55 +42,60 @@ export function LoginForm({
           <CardDescription>アカウントにログイン</CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={signInEmail}>
-            <div className="grid gap-6">
-              <div className="grid gap-6">
-                <div className="grid gap-3">
-                  <Label htmlFor="email">メールアドレス</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="example@example.com"
-                    required
-                  />
-                </div>
-                <div className="grid gap-3">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">パスワード</Label>
-                    <a
-                      href="#"
-                      className="ml-auto text-sm underline-offset-4 hover:underline"
-                    >
-                      パスワードをお忘れですか？
-                    </a>
-                  </div>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full">
-                  ログイン
-                </Button>
-              </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>メールアドレス</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="email"
+                        placeholder="example@example.com"
+                        disabled={isPending}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex items-center">
+                      <FormLabel>パスワード</FormLabel>
+                      <a
+                        href="#"
+                        className="ml-auto text-sm underline-offset-4 hover:underline"
+                      >
+                        パスワードをお忘れですか？
+                      </a>
+                    </div>
+                    <FormControl>
+                      <Input {...field} type="password" disabled={isPending} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" className="w-full" disabled={isPending}>
+                {isPending ? "ログイン中..." : "ログイン"}
+              </Button>
               <div className="text-center text-sm">
                 アカウントをお持ちでない方は{" "}
                 <Link href="/signin" className="underline underline-offset-4">
-                  新規登録
+                  アカウント作成
                 </Link>
               </div>
-            </div>
-          </form>
+            </form>
+          </Form>
         </CardContent>
       </Card>
-      <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        続行をクリックすることで、<a href="#">利用規約</a>と
-        <a href="#">プライバシーポリシー</a>
-        に同意したものとみなされます。
-      </div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
-import { signUpEmail } from "@/actions/certification";
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,15 +8,32 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useFormSubmission } from "@/hooks/use-form-submission";
+import { useSignupForm } from "@/hooks/use-form-validation";
 import { cn } from "@/lib/utils";
+import { SignUpEmailInput } from "@/zod/certification";
 import Link from "next/link";
 
 export function SigninForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const form = useSignupForm();
+  const { handleSignup, isPending } = useFormSubmission();
+
+  const onSubmit = (data: SignUpEmailInput) => {
+    handleSignup(data);
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -24,51 +42,83 @@ export function SigninForm({
           <CardDescription>新しいアカウントにサインイン</CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={signUpEmail}>
-            <div className="grid gap-6">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
               <div className="grid gap-6">
-                <div className="grid gap-3">
-                  <Label htmlFor="name">お名前</Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    type="text"
-                    placeholder="山田太郎"
-                    required
-                  />
-                </div>
-                <div className="grid gap-3">
-                  <Label htmlFor="email">メールアドレス</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="example@example.com"
-                    required
-                  />
-                </div>
-                <div className="grid gap-3">
-                  <Label htmlFor="password">パスワード</Label>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    placeholder="8文字以上のパスワード"
-                    required
-                  />
-                </div>
-                <div className="grid gap-3">
-                  <Label htmlFor="confirm-password">パスワード確認</Label>
-                  <Input
-                    id="confirm-password"
-                    name="confirm-password"
-                    type="password"
-                    placeholder="パスワードを再入力"
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full">
-                  アカウント作成
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>お名前</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="text"
+                          placeholder="山田太郎"
+                          disabled={isPending}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>メールアドレス</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="email"
+                          placeholder="example@example.com"
+                          disabled={isPending}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>パスワード</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="password"
+                          placeholder="8文字以上のパスワード"
+                          disabled={isPending}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>パスワード確認</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="password"
+                          placeholder="パスワードを再入力"
+                          disabled={isPending}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full" disabled={isPending}>
+                  {isPending ? "アカウント作成中..." : "アカウント作成"}
                 </Button>
               </div>
               <div className="text-center text-sm">
@@ -77,8 +127,8 @@ export function SigninForm({
                   ログイン
                 </Link>
               </div>
-            </div>
-          </form>
+            </form>
+          </Form>
         </CardContent>
       </Card>
       <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">

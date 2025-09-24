@@ -1,9 +1,7 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { signInEmailSchema, signUpEmailSchema } from "@/zod/certification";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 export async function signUpEmail(formData: FormData) {
   try {
@@ -13,22 +11,25 @@ export async function signUpEmail(formData: FormData) {
       password: formData.get("password") as string,
       confirmPassword: formData.get("confirmPassword") as string,
     };
-    const validatedData = signUpEmailSchema.parse(data);
     const res = await auth.api.signUpEmail({
-      body: validatedData,
+      body: data,
     });
 
     // Better Authのレスポンス構造に基づいてエラーハンドリング
     if (!res.user) {
-      throw new Error("アカウント作成に失敗しました");
+      return { success: false, error: "アカウント作成に失敗しました" };
     }
 
     revalidatePath("/");
+    return { success: true, user: res.user };
   } catch (error) {
     console.error("Sign up error:", error);
-    throw error;
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "アカウント作成に失敗しました",
+    };
   }
-  redirect("/");
 }
 
 export async function signInEmail(formData: FormData) {
@@ -37,22 +38,24 @@ export async function signInEmail(formData: FormData) {
       email: formData.get("email") as string,
       password: formData.get("password") as string,
     };
-    const validatedData = signInEmailSchema.parse(data);
     const res = await auth.api.signInEmail({
-      body: validatedData,
+      body: data,
     });
 
     // Better Authのレスポンス構造に基づいてエラーハンドリング
     if (!res.user) {
-      throw new Error("ログインに失敗しました");
+      return { success: false, error: "ログインに失敗しました" };
     }
 
     revalidatePath("/");
+    return { success: true, user: res.user };
   } catch (error) {
     console.error("Sign in error:", error);
-    throw error;
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "ログインに失敗しました",
+    };
   }
-  redirect("/");
 }
 
 export async function signOut() {
@@ -61,9 +64,13 @@ export async function signOut() {
       headers: {},
     });
     revalidatePath("/");
+    return { success: true };
   } catch (error) {
     console.error("Sign out error:", error);
-    throw error;
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "ログアウトに失敗しました",
+    };
   }
-  redirect("/");
 }
