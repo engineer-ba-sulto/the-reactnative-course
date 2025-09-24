@@ -1,19 +1,11 @@
+import { signOutAction } from "@/actions/certification";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import Link from "next/link";
 
-async function SignOutButton() {
-  "use server";
-  const authInstance = await auth;
-  await authInstance.api.signOut({
-    headers: await headers(),
-  });
-}
-
 export async function Header() {
-  const authInstance = await auth;
-  const session = await authInstance.api.getSession({
+  const session = await auth.api.getSession({
     headers: await headers(),
   });
 
@@ -25,7 +17,7 @@ export async function Header() {
         </Link>
         <nav>
           {session?.user ? (
-            <form action={SignOutButton}>
+            <form action={signOutAction}>
               <span className="mr-4">
                 Welcome, {session.user.name || session.user.email}
               </span>
