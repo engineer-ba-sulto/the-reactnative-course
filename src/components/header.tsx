@@ -1,5 +1,5 @@
-import { signOutAction } from "@/actions/certification";
 import { Button } from "@/components/ui/button";
+import UserDropdownMenu from "@/components/user-dropdown-menu";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import Link from "next/link";
@@ -17,12 +17,7 @@ export async function Header() {
         </Link>
         <nav>
           {session?.user ? (
-            <form action={signOutAction}>
-              <span className="mr-4">
-                Welcome, {session.user.name || session.user.email}
-              </span>
-              <Button type="submit">Logout</Button>
-            </form>
+            <UserDropdownMenu />
           ) : (
             <div className="flex gap-2">
               <Button asChild variant="outline">

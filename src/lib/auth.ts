@@ -6,7 +6,8 @@ import { username } from "better-auth/plugins";
 import { nanoid } from "nanoid";
 
 export const auth = betterAuth({
-  basePath: process.env.BETTER_AUTH_URL!,
+  // Ensure Better Auth endpoints are mounted under /api/auth
+  basePath: "/api/auth",
   database: drizzleAdapter(db, {
     provider: "pg",
     usePlural: true,
