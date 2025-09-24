@@ -1,3 +1,4 @@
+import { signUpEmail } from "@/actions/certification";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -23,7 +24,7 @@ export function SigninForm({
           <CardDescription>新しいアカウントにサインイン</CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form action={signUpEmail}>
             <div className="grid gap-6">
               <div className="grid gap-6">
                 <div className="grid gap-3">
