@@ -12,13 +12,13 @@ export default function AppList() {
   const appCounts = getAppCountByStatus(appList);
 
   return (
-    <section className="py-16 px-4 bg-gray-50">
+    <section id="apps" className="py-16 px-4 bg-gray-50">
       <div className="max-w-7xl mx-auto">
         <div className="space-y-12">
           {/* セクションヘッダー */}
           <div className="text-center space-y-4">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-              アプリ一覧
+              開発アプリ一覧
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               React Nativeで開発した実際のアプリケーションをご紹介します。

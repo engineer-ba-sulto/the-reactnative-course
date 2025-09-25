@@ -29,7 +29,7 @@ export default function WaitingList() {
 
   if (isSubmitted) {
     return (
-      <section className="py-16 px-4 bg-gray-50">
+      <section id="waiting-list" className="py-16 px-4 bg-gray-50">
         <div className="max-w-4xl mx-auto text-center">
           <Card className="p-8">
             <div className="space-y-4">
@@ -60,7 +60,7 @@ export default function WaitingList() {
   }
 
   return (
-    <section className="py-16 px-4 bg-gray-50">
+    <section id="waiting-list" className="py-16 px-4 bg-gray-50">
       <div className="max-w-4xl mx-auto text-center">
         <div className="space-y-8">
           <div className="space-y-4">

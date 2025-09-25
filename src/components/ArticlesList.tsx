@@ -4,7 +4,7 @@ import { sampleArticles } from "@/constants/articles";
 
 export default function ArticlesList() {
   return (
-    <section className="py-16 px-4">
+    <section id="articles" className="py-16 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="space-y-12">
           {/* セクションヘッダー */}
