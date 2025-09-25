@@ -1,96 +1,102 @@
-import fs from "fs";
-import matter from "gray-matter";
-import path from "path";
+import { ArticleWithContent } from "@/types/article";
+import {
+  getAllArticlesFromR2,
+  getArticleBySlugFromR2,
+  getArticleSlugsFromR2,
+  getArticlesByCategoryFromR2,
+} from "./r2-articles";
 
-const articlesDirectory = path.join(process.cwd(), "src/content/articles");
-
-export interface ArticleMetadata {
-  id: string;
-  title: string;
-  excerpt: string;
-  publishedAt: string;
-  readTime: string;
-  category: string;
-  imageUrl?: string;
-}
-
-export interface Article {
-  slug: string;
-  metadata: ArticleMetadata;
-  content: string;
-}
-
-export async function getAllArticles(): Promise<Article[]> {
-  try {
-    const fileNames = fs.readdirSync(articlesDirectory);
-    const articles = await Promise.all(
-      fileNames
-        .filter((name) => name.endsWith(".mdx"))
-        .map(async (fileName) => {
-          const slug = fileName.replace(/\.mdx$/, "");
-          return await getArticleBySlug(slug);
-        })
+/**
+ * R2バケットを取得するヘルパー関数
+ */
+function getR2Bucket(): R2Bucket | null {
+  if (
+    typeof globalThis !== "undefined" &&
+    (globalThis as typeof globalThis & { ARTICLES_BUCKET?: R2Bucket })
+      .ARTICLES_BUCKET
+  ) {
+    return (
+      (globalThis as typeof globalThis & { ARTICLES_BUCKET?: R2Bucket })
+        .ARTICLES_BUCKET ?? null
     );
-
-    // 公開日でソート（新しい順）
-    return articles.sort(
-      (a, b) =>
-        new Date(b.metadata.publishedAt).getTime() -
-        new Date(a.metadata.publishedAt).getTime()
-    );
-  } catch (error) {
-    console.error("Error reading articles:", error);
-    return [];
   }
+  return null;
 }
 
-export async function getArticleBySlug(slug: string): Promise<Article> {
-  // slugが空文字列やundefinedの場合はエラーを投げる
-  if (!slug || slug.trim() === "") {
-    throw new Error("Invalid slug provided");
+/**
+ * 開発環境用のフォールバック実装
+ * 本番環境ではR2を使用し、開発環境ではローカルファイルを使用
+ */
+async function getFallbackArticles(): Promise<ArticleWithContent[]> {
+  // 開発環境では空の配列を返す（後でローカルファイル読み込みを実装可能）
+  console.warn("R2 bucket not available, returning empty articles list");
+  return [];
+}
+
+async function getFallbackArticleBySlug(
+  slug: string
+): Promise<ArticleWithContent> {
+  throw new Error(`Article not found: ${slug} (R2 bucket not available)`);
+}
+
+async function getFallbackArticleSlugs(): Promise<string[]> {
+  console.warn("R2 bucket not available, returning empty slugs list");
+  return [];
+}
+
+async function getFallbackArticlesByCategory(
+  category: string
+): Promise<ArticleWithContent[]> {
+  console.warn(
+    `R2 bucket not available, returning empty articles list for category: ${category}`
+  );
+  return [];
+}
+
+// 型定義は @/types/article からエクスポート
+
+export async function getAllArticles(): Promise<ArticleWithContent[]> {
+  const bucket = getR2Bucket();
+
+  if (bucket) {
+    return await getAllArticlesFromR2(bucket);
   }
 
-  try {
-    const fullPath = path.join(articlesDirectory, `${slug}.mdx`);
+  return await getFallbackArticles();
+}
 
-    // ファイルの存在確認
-    if (!fs.existsSync(fullPath)) {
-      throw new Error(`Article file not found: ${slug}.mdx`);
-    }
+export async function getArticleBySlug(
+  slug: string
+): Promise<ArticleWithContent> {
+  const bucket = getR2Bucket();
 
-    const fileContents = fs.readFileSync(fullPath, "utf8");
-
-    // MDXファイルからメタデータを抽出
-    const { data, content } = matter(fileContents);
-
-    return {
-      slug,
-      metadata: data as ArticleMetadata,
-      content,
-    };
-  } catch (error) {
-    console.error(`Error reading article ${slug}:`, error);
-    throw new Error(`Article not found: ${slug}`);
+  if (bucket) {
+    return await getArticleBySlugFromR2(bucket, slug);
   }
+
+  return await getFallbackArticleBySlug(slug);
 }
 
 export async function getArticleSlugs(): Promise<string[]> {
-  try {
-    const fileNames = fs.readdirSync(articlesDirectory);
-    return fileNames
-      .filter((name) => name.endsWith(".mdx"))
-      .map((name) => name.replace(/\.mdx$/, ""));
-  } catch (error) {
-    console.error("Error reading article slugs:", error);
-    return [];
+  const bucket = getR2Bucket();
+
+  if (bucket) {
+    return await getArticleSlugsFromR2(bucket);
   }
+
+  return await getFallbackArticleSlugs();
 }
 
 export async function getArticlesByCategory(
   category: string
-): Promise<Article[]> {
-  const articles = await getAllArticles();
-  return articles.filter((article) => article.metadata.category === category);
+): Promise<ArticleWithContent[]> {
+  const bucket = getR2Bucket();
+
+  if (bucket) {
+    return await getArticlesByCategoryFromR2(bucket, category);
+  }
+
+  return await getFallbackArticlesByCategory(category);
 }
 
 // Note: getArticlesByTag function removed as tags property is not available in the new ArticleMetadata interface

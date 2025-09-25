@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getArticleBySlug, getArticleSlugs } from "@/lib/articles";
+import { mdxToHTML } from "@/lib/mdx-utils";
 import { ArrowLeft, Calendar, Clock } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -67,15 +68,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound();
   }
 
-  // MDXコンポーネントを動的にインポート
-  let MDXContent;
-  try {
-    const mdxModule = await import(`@/content/articles/${slug}.mdx`);
-    MDXContent = mdxModule.default;
-  } catch (error) {
-    console.error(`Error importing MDX content for ${slug}:`, error);
-    notFound();
-  }
+  // MDXコンテンツをHTMLに変換
+  const htmlContent = mdxToHTML(article.content);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -110,7 +104,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
         {/* 記事本文 */}
         <article className="prose prose-lg max-w-none dark:prose-invert">
-          <MDXContent />
+          <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
         </article>
 
         {/* 記事フッター */}
