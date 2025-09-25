@@ -34,7 +34,7 @@ export async function Header() {
               className="bg-green-500 text-green-900 hover:bg-green-600"
             >
               <Link href="#waiting-list" className="text-white font-bold">
-                ウェイティングリスト
+                ウェイティングリストに登録
               </Link>
             </Button>
             <Button asChild variant="link">
