@@ -15,6 +15,7 @@ export async function Header() {
           React Native コース
         </Link>
         <nav>
+          {/* TODO: 認証機能を有効にする場合は、下記のコメントアウトを外してください */}
           {/* {session?.user ? (
             <UserDropdownMenu />
           ) : 
