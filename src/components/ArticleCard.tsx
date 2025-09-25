@@ -1,8 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Article } from "@/types/article";
+import Link from "next/link";
 
-export default function ArticleCard({ article }: { article: Article }) {
+export default function ArticleCard({
+  article,
+  slug,
+}: {
+  article: Article;
+  slug: string;
+}) {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <div className="p-6 space-y-4">
@@ -27,9 +34,11 @@ export default function ArticleCard({ article }: { article: Article }) {
           <span className="text-sm text-gray-500">
             {new Date(article.publishedAt).toLocaleDateString("ja-JP")}
           </span>
-          <Button variant="outline" size="sm">
-            続きを読む
-          </Button>
+          <Link href={`/articles/${slug}`}>
+            <Button variant="outline" size="sm">
+              続きを読む
+            </Button>
+          </Link>
         </div>
       </div>
     </Card>

@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+// import { auth } from "@/lib/auth";
+// import { headers } from "next/headers";
 import Link from "next/link";
 
 export async function Header() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  // const session = await auth.api.getSession({
+  //   headers: await headers(),
+  // });
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b">
@@ -33,7 +33,7 @@ export async function Header() {
               <Link href="#apps">アプリ実績</Link>
             </Button>
             <Button asChild variant="link">
-              <Link href="#articles">技術記事</Link>
+              <Link href="/articles">技術記事</Link>
             </Button>
             <Button
               asChild

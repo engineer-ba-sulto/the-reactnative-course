@@ -1,0 +1,188 @@
+---
+id: 'react-native-fundamentals'
+title: 'React Nativeの基礎知識'
+excerpt: 'React Nativeの基本的な概念と開発環境の構築方法について説明します。JavaScriptとReactの知識を使って、iOSとAndroidの両方のプラットフォーム向けのアプリを一度に開発できます。'
+publishedAt: '2024-01-15'
+readTime: '10分'
+category: 'Fundamentals'
+imageUrl: '/esteem-app.png'
+---
+
+# React Nativeの基礎知識
+
+React Nativeは、Facebook（現Meta）が開発したモバイルアプリケーション開発フレームワークです。JavaScriptとReactの知識を使って、iOSとAndroidの両方のプラットフォーム向けのアプリを一度に開発できます。
+
+## React Nativeとは
+
+React Nativeは、**「Learn once, write anywhere」**の理念のもと開発されました。これは、一度React Nativeを学べば、どこでも（iOS、Android、Web）アプリを開発できるという意味です。
+
+### 主な特徴
+
+- **クロスプラットフォーム開発**: 一つのコードベースでiOSとAndroidの両方をサポート
+- **ネイティブパフォーマンス**: ネイティブコンポーネントを使用するため、高いパフォーマンスを実現
+- **ホットリロード**: 開発中の変更を即座に反映
+- **豊富なエコシステム**: 多数のサードパーティライブラリが利用可能
+
+## 開発環境の構築
+
+### 必要なツール
+
+1. **Node.js** (v16以上推奨)
+2. **React Native CLI**
+3. **Android Studio** (Android開発用)
+4. **Xcode** (iOS開発用、macOSのみ)
+
+### インストール手順
+
+```bash
+# React Native CLIをグローバルインストール
+npm install -g @react-native-community/cli
+
+# 新しいプロジェクトを作成
+npx react-native init MyApp
+
+# プロジェクトディレクトリに移動
+cd MyApp
+
+# 依存関係をインストール
+npm install
+```
+
+## 基本的なコンポーネント
+
+React Nativeでは、HTMLの代わりに専用のコンポーネントを使用します。
+
+### 主要なコンポーネント
+
+| コンポーネント | 説明 | HTML相当 |
+|---------------|------|----------|
+| `View` | コンテナ要素 | `<div>` |
+| `Text` | テキスト表示 | `<p>`, `<span>` |
+| `Image` | 画像表示 | `<img>` |
+| `ScrollView` | スクロール可能なビュー | `<div>` with overflow |
+| `TouchableOpacity` | タッチ可能な要素 | `<button>` |
+
+### サンプルコード
+
+```jsx
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+
+const App = () => {
+  const [count, setCount] = React.useState(0);
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>カウンターアプリ</Text>
+      <Text style={styles.counter}>{count}</Text>
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={() => setCount(count + 1)}
+      >
+        <Text style={styles.buttonText}>カウントアップ</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  counter: {
+    fontSize: 48,
+    fontWeight: 'bold',
+    marginBottom: 30,
+  },
+  button: {
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});
+
+export default App;
+```
+
+## スタイリング
+
+React Nativeでは、CSSの代わりに**StyleSheet**を使用します。
+
+### 主な違い
+
+- **Flexbox**: デフォルトでFlexboxレイアウトを使用
+- **単位**: `px`の代わりに数値のみ（密度に応じて自動調整）
+- **色**: 16進数カラーコードまたは色名を使用
+
+### スタイルの適用方法
+
+```jsx
+// インラインスタイル
+<View style={{ backgroundColor: 'red', padding: 20 }}>
+
+// StyleSheetを使用（推奨）
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: 'red',
+    padding: 20,
+  },
+});
+
+<View style={styles.container}>
+```
+
+## ナビゲーション
+
+React Nativeアプリでは、画面間の遷移に**React Navigation**が広く使用されています。
+
+### 基本的なセットアップ
+
+```bash
+npm install @react-navigation/native @react-navigation/stack
+npm install react-native-screens react-native-safe-area-context
+```
+
+```jsx
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
+const Stack = createStackNavigator();
+
+const App = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Details" component={DetailsScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+```
+
+## まとめ
+
+React Nativeは、JavaScriptとReactの知識を活用してモバイルアプリを開発できる強力なフレームワークです。クロスプラットフォーム開発により、開発効率を大幅に向上させることができます。
+
+### 次のステップ
+
+1. **プロジェクトの作成**: 実際にプロジェクトを作成して動作確認
+2. **コンポーネントの学習**: 基本的なコンポーネントの使い方を習得
+3. **ナビゲーション**: 画面遷移の実装方法を学習
+4. **API連携**: 外部APIとの連携方法を学習
+
+React Nativeの学習を始めることで、効率的なモバイルアプリ開発が可能になります。継続的な学習と実践を通じて、スキルを向上させていきましょう。

@@ -1,0 +1,408 @@
+---
+id: 'state-management'
+title: 'React Nativeでの状態管理'
+excerpt: 'React Nativeアプリケーションでの状態管理のベストプラクティスについて説明します。Context API、Redux、Zustandなどの状態管理ソリューションを比較し、適切な選択方法を学びます。'
+publishedAt: '2024-01-20'
+readTime: '15分'
+category: 'Advanced'
+imageUrl: '/esteem-app.png'
+---
+
+# React Nativeでの状態管理
+
+React Nativeアプリケーションの開発において、状態管理は重要な要素の一つです。適切な状態管理により、アプリの保守性と拡張性を向上させることができます。
+
+## 状態管理とは
+
+状態管理とは、アプリケーション内のデータの流れと変更を管理する仕組みです。React Nativeでは、コンポーネント間でデータを共有し、状態の変更を効率的に処理する必要があります。
+
+## 状態管理の種類
+
+### 1. ローカル状態（Local State）
+
+コンポーネント内でのみ使用される状態です。`useState`フックを使用して管理します。
+
+```jsx
+import React, { useState } from 'react';
+import { View, Text, Button } from 'react-native';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return (
+    <View>
+      <Text>カウント: {count}</Text>
+      <Button 
+        title="増加" 
+        onPress={() => setCount(count + 1)} 
+      />
+      <Button 
+        title="減少" 
+        onPress={() => setCount(count - 1)} 
+      />
+    </View>
+  );
+};
+```
+
+### 2. グローバル状態（Global State）
+
+複数のコンポーネント間で共有される状態です。主に以下の方法があります：
+
+- **Context API**
+- **Redux**
+- **Zustand**
+- **Jotai**
+
+## Context APIを使用した状態管理
+
+Context APIは、Reactに組み込まれた状態管理ソリューションです。
+
+### 基本的な実装
+
+```jsx
+// contexts/AppContext.js
+import React, { createContext, useContext, useReducer } from 'react';
+
+const AppContext = createContext();
+
+const initialState = {
+  user: null,
+  theme: 'light',
+  notifications: [],
+};
+
+const appReducer = (state, action) => {
+  switch (action.type) {
+    case 'SET_USER':
+      return { ...state, user: action.payload };
+    case 'SET_THEME':
+      return { ...state, theme: action.payload };
+    case 'ADD_NOTIFICATION':
+      return { 
+        ...state, 
+        notifications: [...state.notifications, action.payload] 
+      };
+    default:
+      return state;
+  }
+};
+
+export const AppProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(appReducer, initialState);
+
+  return (
+    <AppContext.Provider value={{ state, dispatch }}>
+      {children}
+    </AppContext.Provider>
+  );
+};
+
+export const useAppContext = () => {
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error('useAppContext must be used within AppProvider');
+  }
+  return context;
+};
+```
+
+### 使用例
+
+```jsx
+// components/UserProfile.js
+import React from 'react';
+import { View, Text, Button } from 'react-native';
+import { useAppContext } from '../contexts/AppContext';
+
+const UserProfile = () => {
+  const { state, dispatch } = useAppContext();
+
+  const handleLogin = () => {
+    dispatch({
+      type: 'SET_USER',
+      payload: { name: 'John Doe', email: 'john@example.com' }
+    });
+  };
+
+  const handleLogout = () => {
+    dispatch({ type: 'SET_USER', payload: null });
+  };
+
+  return (
+    <View>
+      {state.user ? (
+        <View>
+          <Text>ようこそ、{state.user.name}さん</Text>
+          <Button title="ログアウト" onPress={handleLogout} />
+        </View>
+      ) : (
+        <Button title="ログイン" onPress={handleLogin} />
+      )}
+    </View>
+  );
+};
+```
+
+## Reduxを使用した状態管理
+
+Reduxは、予測可能な状態管理ライブラリです。大規模なアプリケーションに適しています。
+
+### インストール
+
+```bash
+npm install @reduxjs/toolkit react-redux
+```
+
+### 基本的な実装
+
+```jsx
+// store/index.js
+import { configureStore } from '@reduxjs/toolkit';
+import userReducer from './slices/userSlice';
+import themeReducer from './slices/themeSlice';
+
+export const store = configureStore({
+  reducer: {
+    user: userReducer,
+    theme: themeReducer,
+  },
+});
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+```
+
+```jsx
+// store/slices/userSlice.js
+import { createSlice } from '@reduxjs/toolkit';
+
+const initialState = {
+  user: null,
+  isLoading: false,
+  error: null,
+};
+
+const userSlice = createSlice({
+  name: 'user',
+  initialState,
+  reducers: {
+    setUser: (state, action) => {
+      state.user = action.payload;
+    },
+    setLoading: (state, action) => {
+      state.isLoading = action.payload;
+    },
+    setError: (state, action) => {
+      state.error = action.payload;
+    },
+  },
+});
+
+export const { setUser, setLoading, setError } = userSlice.actions;
+export default userSlice.reducer;
+```
+
+### 使用例
+
+```jsx
+// components/UserProfile.js
+import React from 'react';
+import { View, Text, Button } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import { setUser } from '../store/slices/userSlice';
+
+const UserProfile = () => {
+  const user = useSelector((state) => state.user.user);
+  const dispatch = useDispatch();
+
+  const handleLogin = () => {
+    dispatch(setUser({ 
+      name: 'John Doe', 
+      email: 'john@example.com' 
+    }));
+  };
+
+  return (
+    <View>
+      {user ? (
+        <Text>ようこそ、{user.name}さん</Text>
+      ) : (
+        <Button title="ログイン" onPress={handleLogin} />
+      )}
+    </View>
+  );
+};
+```
+
+## Zustandを使用した状態管理
+
+Zustandは、軽量でシンプルな状態管理ライブラリです。
+
+### インストール
+
+```bash
+npm install zustand
+```
+
+### 基本的な実装
+
+```jsx
+// store/userStore.js
+import { create } from 'zustand';
+
+const useUserStore = create((set) => ({
+  user: null,
+  setUser: (user) => set({ user }),
+  clearUser: () => set({ user: null }),
+}));
+
+export default useUserStore;
+```
+
+### 使用例
+
+```jsx
+// components/UserProfile.js
+import React from 'react';
+import { View, Text, Button } from 'react-native';
+import useUserStore from '../store/userStore';
+
+const UserProfile = () => {
+  const { user, setUser, clearUser } = useUserStore();
+
+  const handleLogin = () => {
+    setUser({ name: 'John Doe', email: 'john@example.com' });
+  };
+
+  return (
+    <View>
+      {user ? (
+        <View>
+          <Text>ようこそ、{user.name}さん</Text>
+          <Button title="ログアウト" onPress={clearUser} />
+        </View>
+      ) : (
+        <Button title="ログイン" onPress={handleLogin} />
+      )}
+    </View>
+  );
+};
+```
+
+## 状態管理の選択指針
+
+### プロジェクトの規模による選択
+
+| 規模 | 推奨ソリューション | 理由 |
+|------|-------------------|------|
+| 小規模 | useState + Context API | シンプルで学習コストが低い |
+| 中規模 | Zustand | 軽量で使いやすい |
+| 大規模 | Redux Toolkit | 強力な開発者ツールと予測可能性 |
+
+### パフォーマンスの考慮事項
+
+1. **不要な再レンダリングの回避**
+2. **メモ化の適切な使用**
+3. **状態の正規化**
+
+```jsx
+// メモ化の例
+import React, { memo, useMemo } from 'react';
+
+const ExpensiveComponent = memo(({ data }) => {
+  const processedData = useMemo(() => {
+    return data.map(item => ({
+      ...item,
+      processed: true
+    }));
+  }, [data]);
+
+  return (
+    <View>
+      {processedData.map(item => (
+        <Text key={item.id}>{item.name}</Text>
+      ))}
+    </View>
+  );
+});
+```
+
+## ベストプラクティス
+
+### 1. 状態の正規化
+
+```jsx
+// 悪い例
+const state = {
+  users: [
+    { id: 1, name: 'John', posts: [{ id: 1, title: 'Post 1' }] },
+    { id: 2, name: 'Jane', posts: [{ id: 2, title: 'Post 2' }] }
+  ]
+};
+
+// 良い例
+const state = {
+  users: {
+    1: { id: 1, name: 'John' },
+    2: { id: 2, name: 'Jane' }
+  },
+  posts: {
+    1: { id: 1, title: 'Post 1', userId: 1 },
+    2: { id: 2, title: 'Post 2', userId: 2 }
+  }
+};
+```
+
+### 2. アクションの命名規則
+
+```jsx
+// 一貫性のある命名
+const actions = {
+  SET_USER: 'SET_USER',
+  UPDATE_USER: 'UPDATE_USER',
+  DELETE_USER: 'DELETE_USER',
+  SET_LOADING: 'SET_LOADING',
+  SET_ERROR: 'SET_ERROR'
+};
+```
+
+### 3. エラーハンドリング
+
+```jsx
+const userSlice = createSlice({
+  name: 'user',
+  initialState: {
+    user: null,
+    isLoading: false,
+    error: null,
+  },
+  reducers: {
+    fetchUserStart: (state) => {
+      state.isLoading = true;
+      state.error = null;
+    },
+    fetchUserSuccess: (state, action) => {
+      state.isLoading = false;
+      state.user = action.payload;
+    },
+    fetchUserFailure: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
+  },
+});
+```
+
+## まとめ
+
+React Nativeでの状態管理は、アプリケーションの複雑さに応じて適切なソリューションを選択することが重要です。
+
+### 主要なポイント
+
+1. **プロジェクトの規模に応じた選択**
+2. **パフォーマンスの最適化**
+3. **一貫性のある実装**
+4. **適切なエラーハンドリング**
+
+適切な状態管理により、保守性が高く、拡張しやすいアプリケーションを構築できます。継続的な学習と実践を通じて、最適な状態管理パターンを習得していきましょう。

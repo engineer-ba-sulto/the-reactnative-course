@@ -1,8 +1,12 @@
 import ArticleCard from "@/components/ArticleCard";
 import { Button } from "@/components/ui/button";
-import { sampleArticles } from "@/constants/articles";
+import { getAllArticles } from "@/lib/articles";
+import Link from "next/link";
 
-export default function ArticlesList() {
+export default async function ArticlesList() {
+  const articles = await getAllArticles();
+	const latestArticles = articles.slice(0, 3);
+
   return (
     <section id="articles" className="py-16 px-4">
       <div className="max-w-7xl mx-auto">
@@ -20,17 +24,23 @@ export default function ArticlesList() {
 
           {/* 記事一覧 */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {sampleArticles.map((article) => (
-              <ArticleCard key={article.id} article={article} />
+            {latestArticles.map((article) => (
+              <ArticleCard
+                key={article.slug}
+                article={article.metadata}
+                slug={article.slug}
+              />
             ))}
           </div>
 
           {/* もっと見るボタン */}
-          <div className="text-center">
-            <Button variant="outline" size="lg">
-              すべての記事を見る
-            </Button>
-          </div>
+          {articles.length > 2 && (
+            <div className="text-center">
+              <Button variant="outline" size="lg">
+                <Link href="/articles">すべての記事を見る</Link>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </section>

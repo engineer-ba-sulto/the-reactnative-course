@@ -1,4 +1,4 @@
-import { BookOpen, Settings, User } from "lucide-react";
+import { BookOpen, FileText, Settings, User } from "lucide-react";
 
 // メニューデータ
 export const menuItems = [
@@ -11,6 +11,11 @@ export const menuItems = [
     title: "コース",
     url: "/dashboard/courses",
     icon: BookOpen,
+  },
+  {
+    title: "技術記事",
+    url: "/articles",
+    icon: FileText,
   },
   {
     title: "設定",

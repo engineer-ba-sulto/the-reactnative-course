@@ -1,0 +1,137 @@
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { getArticleBySlug, getArticleSlugs } from "@/lib/articles";
+import { ArrowLeft, Calendar, Clock } from "lucide-react";
+import { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+
+interface ArticlePageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export async function generateStaticParams() {
+  const slugs = await getArticleSlugs();
+  return slugs.map((slug) => ({
+    slug,
+  }));
+}
+
+export async function generateMetadata({
+  params,
+}: ArticlePageProps): Promise<Metadata> {
+  const { slug } = await params;
+
+  // slugが存在しない場合は404ページ用のメタデータを返す
+  if (!slug) {
+    return {
+      title: "記事が見つかりません | React Native Course",
+    };
+  }
+
+  try {
+    const article = await getArticleBySlug(slug);
+
+    return {
+      title: `${article.metadata.title} | React Native Course`,
+      description: article.metadata.excerpt,
+      openGraph: {
+        title: article.metadata.title,
+        description: article.metadata.excerpt,
+        type: "article",
+        publishedTime: article.metadata.publishedAt,
+        images: article.metadata.imageUrl
+          ? [article.metadata.imageUrl]
+          : undefined,
+      },
+    };
+  } catch {
+    return {
+      title: "記事が見つかりません | React Native Course",
+    };
+  }
+}
+
+export default async function ArticlePage({ params }: ArticlePageProps) {
+  const { slug } = await params;
+
+  // slugが存在しない場合は404ページを表示
+  if (!slug) {
+    notFound();
+  }
+
+  let article;
+  try {
+    article = await getArticleBySlug(slug);
+  } catch {
+    notFound();
+  }
+
+  // MDXコンポーネントを動的にインポート
+  let MDXContent;
+  try {
+    const mdxModule = await import(`@/content/articles/${slug}.mdx`);
+    MDXContent = mdxModule.default;
+  } catch (error) {
+    console.error(`Error importing MDX content for ${slug}:`, error);
+    notFound();
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto">
+        {/* 戻るボタン */}
+        <div className="mb-6">
+          <Link href="/articles">
+            <Button variant="ghost" className="gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              記事一覧に戻る
+            </Button>
+          </Link>
+        </div>
+
+        {/* 記事ヘッダー */}
+        <header className="mb-8">
+          <div className="flex items-center gap-2 mb-4 text-sm text-gray-500 dark:text-gray-400">
+            <span className="flex items-center gap-1">
+              <Calendar className="h-4 w-4" />
+              {new Date(article.metadata.publishedAt).toLocaleDateString(
+                "ja-JP"
+              )}
+            </span>
+            <span className="flex items-center gap-1">
+              <Clock className="h-4 w-4" />
+              {article.metadata.readTime}
+            </span>
+            <span>ID: {article.metadata.id}</span>
+            <Badge variant="secondary">{article.metadata.category}</Badge>
+          </div>
+        </header>
+
+        {/* 記事本文 */}
+        <article className="prose prose-lg max-w-none dark:prose-invert">
+          <MDXContent />
+        </article>
+
+        {/* 記事フッター */}
+        <footer className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex justify-between items-center">
+            <Link href="/articles">
+              <Button variant="outline" className="gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                記事一覧に戻る
+              </Button>
+            </Link>
+
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              最終更新:{" "}
+              {new Date(article.metadata.publishedAt).toLocaleDateString(
+                "ja-JP"
+              )}
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  );
+}
