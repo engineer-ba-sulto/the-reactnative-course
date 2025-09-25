@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { Button } from "./ui/button";
+
 export default function Hero() {
   return (
     <section className="py-20 px-4">
@@ -14,12 +17,17 @@ export default function Hero() {
               初心者から上級者まで対応した包括的なコースです。
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                今すぐ始める
-              </button>
-              <button className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
-                詳細を見る
-              </button>
+              <Button
+                asChild
+                variant="outline"
+                className="bg-green-500 text-green-900 hover:bg-green-600 h-16"
+              >
+                <Link href="#waiting-list">
+                  <span className="text-white text-lg font-bold">
+                    ウェイティングリストに登録
+                  </span>
+                </Link>
+              </Button>
             </div>
           </div>
 
