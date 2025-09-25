@@ -9,14 +9,11 @@ export async function GET() {
     ).ARTICLES_BUCKET;
 
     if (!bucket) {
-      return NextResponse.json(
-        { error: "R2 bucket not configured" },
-        { status: 500 }
-      );
+      console.warn("R2 bucket not available, returning empty articles list");
+      return NextResponse.json([]);
     }
 
-    const articles = await getAllArticlesFromR2(bucket);
-
+    const articles = await getAllArticlesFromR2();
     return NextResponse.json(articles);
   } catch (error) {
     console.error("Error fetching articles:", error);

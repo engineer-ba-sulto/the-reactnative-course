@@ -1,11 +1,12 @@
 import ArticleCard from "@/components/ArticleCard";
 import { Button } from "@/components/ui/button";
-import { getAllArticles } from "@/lib/articles";
+import { getAllArticlesFromR2 } from "@/lib/r2-articles";
 import Link from "next/link";
 
 export default async function ArticlesList() {
-  const articles = await getAllArticles();
-	const latestArticles = articles.slice(0, 3);
+  const articles = await getAllArticlesFromR2();
+  console.log("articles", articles);
+  const latestArticles = articles.slice(0, 3);
 
   return (
     <section id="articles" className="py-16 px-4">

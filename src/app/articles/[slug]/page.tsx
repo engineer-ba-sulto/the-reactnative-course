@@ -1,7 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getArticleBySlug, getArticleSlugs } from "@/lib/articles";
 import { mdxToHTML } from "@/lib/mdx-utils";
+import {
+  getArticleBySlugFromR2,
+  getArticleSlugsFromR2,
+} from "@/lib/r2-articles";
 import { ArrowLeft, Calendar, Clock } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -12,7 +15,16 @@ interface ArticlePageProps {
 }
 
 export async function generateStaticParams() {
-  const slugs = await getArticleSlugs();
+  // Cloudflare Workers環境でのR2バケットアクセス
+  const bucket = (
+    globalThis as typeof globalThis & { ARTICLES_BUCKET?: R2Bucket }
+  ).ARTICLES_BUCKET;
+
+  let slugs: string[] = [];
+  if (bucket) {
+    slugs = await getArticleSlugsFromR2(bucket);
+  }
+
   return slugs.map((slug) => ({
     slug,
   }));
@@ -31,7 +43,16 @@ export async function generateMetadata({
   }
 
   try {
-    const article = await getArticleBySlug(slug);
+    // Cloudflare Workers環境でのR2バケットアクセス
+    const bucket = (
+      globalThis as typeof globalThis & { ARTICLES_BUCKET?: R2Bucket }
+    ).ARTICLES_BUCKET;
+
+    if (!bucket) {
+      throw new Error("R2 bucket not available");
+    }
+
+    const article = await getArticleBySlugFromR2(bucket, slug);
 
     return {
       title: `${article.metadata.title} | React Native Course`,
@@ -63,7 +84,16 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   let article;
   try {
-    article = await getArticleBySlug(slug);
+    // Cloudflare Workers環境でのR2バケットアクセス
+    const bucket = (
+      globalThis as typeof globalThis & { ARTICLES_BUCKET?: R2Bucket }
+    ).ARTICLES_BUCKET;
+
+    if (!bucket) {
+      throw new Error("R2 bucket not available");
+    }
+
+    article = await getArticleBySlugFromR2(bucket, slug);
   } catch {
     notFound();
   }

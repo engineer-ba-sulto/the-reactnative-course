@@ -1,12 +1,13 @@
 import type { ArticleMetadata, ArticleWithContent } from "@/types/article";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import matter from "gray-matter";
 
 /**
  * R2バケットから記事の一覧を取得する
  */
-export async function getAllArticlesFromR2(
-  bucket: R2Bucket
-): Promise<ArticleWithContent[]> {
+export async function getAllArticlesFromR2(): Promise<ArticleWithContent[]> {
+  const { env } = await getCloudflareContext({ async: true });
+  const bucket = env.ARTICLES_BUCKET;
   try {
     // R2バケットからMDXファイルの一覧を取得
     const result = await bucket.list({ prefix: "articles/" });
@@ -99,10 +100,9 @@ export async function getArticleSlugsFromR2(
  * R2バケットからカテゴリ別の記事を取得する
  */
 export async function getArticlesByCategoryFromR2(
-  bucket: R2Bucket,
   category: string
 ): Promise<ArticleWithContent[]> {
-  const articles = await getAllArticlesFromR2(bucket);
+  const articles = await getAllArticlesFromR2();
   return articles.filter((article) => article.metadata.category === category);
 }
 

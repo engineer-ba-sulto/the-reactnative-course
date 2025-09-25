@@ -1,5 +1,5 @@
 import ArticleCard from "@/components/ArticleCard";
-import { getAllArticles } from "@/lib/articles";
+import { getAllArticlesFromR2 } from "@/lib/r2-articles";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ArticlesPage() {
-  const articles = await getAllArticles();
+  const articles = await getAllArticlesFromR2();
 
   return (
     <div className="container mx-auto px-4 py-8">
