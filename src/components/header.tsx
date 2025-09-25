@@ -9,15 +9,15 @@ export async function Header() {
   });
 
   return (
-    <header className="border-b h-18">
-      <div className="container flex justify-between items-center p-4">
+    <header className="sticky top-0 z-50 bg-white border-b">
+      <div className="container flex justify-between items-center h-14 p-4">
         <Link href="/" className="font-bold text-lg">
           React Native コース
         </Link>
         <nav>
           {/* {session?.user ? (
             <UserDropdownMenu />
-          ) : (
+          ) : 
             <div className="flex gap-2">
               <Button asChild variant="outline">
                 <Link href="/signin">Signin</Link>
