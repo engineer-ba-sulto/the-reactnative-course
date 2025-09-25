@@ -7,9 +7,9 @@ export default function Home() {
   return (
     <main className="min-h-screen">
       <Hero />
-      <WaitingList />
-      <ArticlesList />
       <AppsList />
+      <ArticlesList />
+      <WaitingList />
     </main>
   );
 }

@@ -10,7 +10,7 @@ export default function ArticlesList() {
           {/* セクションヘッダー */}
           <div className="text-center space-y-4">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-              最新記事
+              技術記事
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               React Nativeの開発に役立つ記事を定期的に更新しています。

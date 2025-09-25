@@ -85,9 +85,14 @@ export default function WaitingList() {
                   className="text-center"
                 />
               </div>
+              {/* <Button asChild variant="outline" className="">
+                <Link href="#waiting-list" className="text-white font-bold">
+                  ウェイティングリストに登録
+                </Link>
+              </Button> */}
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-green-500 hover:bg-green-600"
                 disabled={isLoading || !email}
               >
                 {isLoading ? "登録中..." : "ウェイティングリストに登録"}

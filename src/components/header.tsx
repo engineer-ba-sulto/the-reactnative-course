@@ -28,6 +28,12 @@ export async function Header() {
             </div>
 						)} */}
           <div className="flex gap-2">
+            <Button asChild variant="link">
+              <Link href="#apps">アプリ実績</Link>
+            </Button>
+            <Button asChild variant="link">
+              <Link href="#articles">技術記事</Link>
+            </Button>
             <Button
               asChild
               variant="outline"
@@ -36,12 +42,6 @@ export async function Header() {
               <Link href="#waiting-list" className="text-white font-bold">
                 ウェイティングリストに登録
               </Link>
-            </Button>
-            <Button asChild variant="link">
-              <Link href="#articles">最新記事</Link>
-            </Button>
-            <Button asChild variant="link">
-              <Link href="#apps">アプリ一覧</Link>
             </Button>
           </div>
         </nav>
