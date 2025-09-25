@@ -25,7 +25,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const article = await getArticleBySlugFromR2(bucket, slug);
+    const article = await getArticleBySlugFromR2(slug);
     return NextResponse.json(article);
   } catch (error) {
     console.error(`Error fetching article:`, error);

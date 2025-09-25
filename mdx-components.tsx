@@ -99,23 +99,49 @@ const components = {
     );
   },
   table: ({ children }) => (
-    <div className="overflow-x-auto mb-4">
-      <table className="min-w-full border-collapse border border-gray-300 dark:border-gray-600">
+    <div className="overflow-x-auto mb-6">
+      <table className="min-w-full border-collapse border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden shadow-sm">
         {children}
       </table>
     </div>
   ),
+  thead: ({ children }) => (
+    <thead className="bg-gray-50 dark:bg-gray-800">{children}</thead>
+  ),
+  tbody: ({ children }) => (
+    <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+      {children}
+    </tbody>
+  ),
   th: ({ children }) => (
-    <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-left font-semibold text-gray-800 dark:text-gray-200">
+    <th className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left font-semibold text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700">
       {children}
     </th>
   ),
   td: ({ children }) => (
-    <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">
+    <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-700 dark:text-gray-300">
       {children}
     </td>
   ),
+  tr: ({ children }) => (
+    <tr className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+      {children}
+    </tr>
+  ),
+  // HTMLタグをテキストとして表示するための処理
+  button: ({ children, ...props }) => {
+    const propsString = Object.keys(props)
+      .map((key) => ` ${key}="${props[key]}"`)
+      .join("");
+    return (
+      <span className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono text-gray-800 dark:text-gray-200">
+        &lt;button{propsString}&gt;{children}&lt;/button&gt;
+      </span>
+    );
+  },
 } satisfies MDXComponents;
+
+export { components };
 
 export function useMDXComponents(): MDXComponents {
   return components;

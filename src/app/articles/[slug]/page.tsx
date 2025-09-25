@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { mdxToHTML } from "@/lib/mdx-utils";
+import { mdxToComponent, mdxToHTML } from "@/lib/mdx-utils";
 import {
   getArticleBySlugFromR2,
   getArticleSlugsFromR2,
@@ -15,16 +15,7 @@ interface ArticlePageProps {
 }
 
 export async function generateStaticParams() {
-  // Cloudflare Workers環境でのR2バケットアクセス
-  const bucket = (
-    globalThis as typeof globalThis & { ARTICLES_BUCKET?: R2Bucket }
-  ).ARTICLES_BUCKET;
-
-  let slugs: string[] = [];
-  if (bucket) {
-    slugs = await getArticleSlugsFromR2(bucket);
-  }
-
+  const slugs: string[] = await getArticleSlugsFromR2();
   return slugs.map((slug) => ({
     slug,
   }));
@@ -43,17 +34,7 @@ export async function generateMetadata({
   }
 
   try {
-    // Cloudflare Workers環境でのR2バケットアクセス
-    const bucket = (
-      globalThis as typeof globalThis & { ARTICLES_BUCKET?: R2Bucket }
-    ).ARTICLES_BUCKET;
-
-    if (!bucket) {
-      throw new Error("R2 bucket not available");
-    }
-
-    const article = await getArticleBySlugFromR2(bucket, slug);
-
+    const article = await getArticleBySlugFromR2(slug);
     return {
       title: `${article.metadata.title} | React Native Course`,
       description: article.metadata.excerpt,
@@ -84,23 +65,23 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   let article;
   try {
-    // Cloudflare Workers環境でのR2バケットアクセス
-    const bucket = (
-      globalThis as typeof globalThis & { ARTICLES_BUCKET?: R2Bucket }
-    ).ARTICLES_BUCKET;
-
-    if (!bucket) {
-      throw new Error("R2 bucket not available");
-    }
-
-    article = await getArticleBySlugFromR2(bucket, slug);
+    article = await getArticleBySlugFromR2(slug);
   } catch {
     notFound();
   }
 
-  // MDXコンテンツをHTMLに変換
-  const htmlContent = mdxToHTML(article.content);
-
+  // MDXコンテンツをReactコンポーネントに変換
+  let MDXContent;
+  try {
+    MDXContent = await mdxToComponent(article.content);
+  } catch (error) {
+    console.error("Error in mdxToComponent:", error);
+    // エラーが発生した場合はフォールバックとしてHTMLを表示
+    const htmlContent = mdxToHTML(article.content);
+    MDXContent = function FallbackComponent() {
+      return <div dangerouslySetInnerHTML={{ __html: htmlContent }} />;
+    };
+  }
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
@@ -134,7 +115,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
         {/* 記事本文 */}
         <article className="prose prose-lg max-w-none dark:prose-invert">
-          <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+          <MDXContent />
         </article>
 
         {/* 記事フッター */}

@@ -5,7 +5,6 @@ import Link from "next/link";
 
 export default async function ArticlesList() {
   const articles = await getAllArticlesFromR2();
-  console.log("articles", articles);
   const latestArticles = articles.slice(0, 3);
 
   return (

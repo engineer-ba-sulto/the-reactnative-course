@@ -1,11 +1,21 @@
 import type { ArticleMetadata, ArticleWithContent } from "@/types/article";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import matter from "gray-matter";
+import {
+  getAllArticlesFromLocal,
+  getArticleBySlugFromLocal,
+  getArticleSlugsFromLocal,
+} from "./local-articles";
 
 /**
  * R2バケットから記事の一覧を取得する
  */
 export async function getAllArticlesFromR2(): Promise<ArticleWithContent[]> {
+  // 開発環境ではローカルファイルを使用
+  if (process.env.NODE_ENV === "development") {
+    return await getAllArticlesFromLocal();
+  }
+
   const { env } = await getCloudflareContext({ async: true });
   const bucket = env.ARTICLES_BUCKET;
   try {
@@ -21,7 +31,7 @@ export async function getAllArticlesFromR2(): Promise<ArticleWithContent[]> {
         .filter((obj) => obj.key.endsWith(".mdx"))
         .map(async (obj) => {
           const slug = obj.key.replace("articles/", "").replace(/\.mdx$/, "");
-          return await getArticleBySlugFromR2(bucket, slug);
+          return await getArticleBySlugFromR2(slug);
         })
     );
 
@@ -41,9 +51,16 @@ export async function getAllArticlesFromR2(): Promise<ArticleWithContent[]> {
  * R2バケットから指定されたスラッグの記事を取得する
  */
 export async function getArticleBySlugFromR2(
-  bucket: R2Bucket,
   slug: string
 ): Promise<ArticleWithContent> {
+  // 開発環境ではローカルファイルを使用
+  if (process.env.NODE_ENV === "development") {
+    return await getArticleBySlugFromLocal(slug);
+  }
+
+  const { env } = await getCloudflareContext({ async: true });
+  const bucket = env.ARTICLES_BUCKET;
+
   // slugが空文字列やundefinedの場合はエラーを投げる
   if (!slug || slug.trim() === "") {
     throw new Error("Invalid slug provided");
@@ -77,9 +94,14 @@ export async function getArticleBySlugFromR2(
 /**
  * R2バケットから記事のスラッグ一覧を取得する
  */
-export async function getArticleSlugsFromR2(
-  bucket: R2Bucket
-): Promise<string[]> {
+export async function getArticleSlugsFromR2(): Promise<string[]> {
+  // 開発環境ではローカルファイルを使用
+  if (process.env.NODE_ENV === "development") {
+    return await getArticleSlugsFromLocal();
+  }
+
+  const { env } = await getCloudflareContext({ async: true });
+  const bucket = env.ARTICLES_BUCKET;
   try {
     const result = await bucket.list({ prefix: "articles/" });
 
