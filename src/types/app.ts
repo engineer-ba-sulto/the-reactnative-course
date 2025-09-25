@@ -5,8 +5,8 @@ export type App = {
   description: string;
   category: string;
   platform: "iOS" | "Android" | "Both";
-  status: "Live" | "Beta" | "Development";
+  status: "公開中" | "ベータ" | "開発中";
+  techStack: string[];
   downloadUrl?: string;
-  githubUrl?: string;
   imageUrl?: string;
 };

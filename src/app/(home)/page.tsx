@@ -1,4 +1,4 @@
-import AppsList from "@/components/AppsList";
+import AppsList from "@/components/AppList";
 import ArticlesList from "@/components/ArticlesList";
 import Hero from "@/components/Hero";
 import WaitingList from "@/components/WaitingList";
