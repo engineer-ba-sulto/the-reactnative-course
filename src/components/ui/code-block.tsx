@@ -40,7 +40,7 @@ export function CodeBlock({ code, language }: CodeBlockProps) {
         </Button>
       </div>
       <div className="bg-black p-4 rounded-b-lg overflow-x-auto mt-0">
-        <pre className="text-sm text-gray-100 mt-0">
+        <pre className="text-gray-100 bg-black mt-0 mb-0 p-0">
           <code className={`language-${language}`}>{code}</code>
         </pre>
       </div>
