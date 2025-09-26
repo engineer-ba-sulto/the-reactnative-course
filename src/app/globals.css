@@ -124,6 +124,37 @@
   body {
     @apply bg-background text-foreground wrap-anywhere;
   }
+  /* インラインコードの疑似要素を無効化（特定のクラスのみ） */
+  code.inline-code::before,
+  code.inline-code::after {
+    content: none !important;
+  }
+  /* MDXコンテンツ内のテーブル要素のデフォルトパディングをリセット */
+  .prose td,
+  .prose th,
+  [data-mdx-content] td,
+  [data-mdx-content] th,
+  .mdx-content td,
+  .mdx-content th {
+    padding: 0 !important;
+  }
+  /* MDXコンテンツ内のテーブル要素のパディングを明示的に設定 */
+  .prose td,
+  .prose th,
+  [data-mdx-content] td,
+  [data-mdx-content] th,
+  .mdx-content td,
+  .mdx-content th {
+    padding: 0.75rem !important;
+  }
+  /* MDXコンテンツ内のulタグのパディングをリセット */
+  .prose ul,
+  [data-mdx-content] ul,
+  .mdx-content ul {
+    padding-inline-start: 0 !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+  }
 }
 
 @utility container {

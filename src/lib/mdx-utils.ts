@@ -1,3 +1,4 @@
+import { CodeBlock } from "@/components/ui/code-block";
 import React from "react";
 
 /**
@@ -6,10 +7,8 @@ import React from "react";
  */
 export async function compileMDXToComponent(mdxContent: string) {
   return function MDXComponent() {
-    const htmlContent = fallbackMarkdownToHTML(mdxContent);
-    return React.createElement("div", {
-      dangerouslySetInnerHTML: { __html: htmlContent },
-    });
+    const processedContent = processMDXContent(mdxContent);
+    return React.createElement("div", null, ...processedContent);
   };
 }
 
@@ -19,10 +18,8 @@ export async function compileMDXToComponent(mdxContent: string) {
  */
 export async function mdxToComponent(mdxContent: string) {
   return function MDXComponent() {
-    const htmlContent = fallbackMarkdownToHTML(mdxContent);
-    return React.createElement("div", {
-      dangerouslySetInnerHTML: { __html: htmlContent },
-    });
+    const processedContent = processMDXContent(mdxContent);
+    return React.createElement("div", null, ...processedContent);
   };
 }
 
@@ -35,6 +32,67 @@ export function mdxToHTML(mdxContent: string): string {
 }
 
 /**
+ * MDXコンテンツをReactコンポーネントの配列に変換
+ */
+function processMDXContent(mdxContent: string): React.ReactNode[] {
+  // フロントマターを除去
+  const content = mdxContent.replace(/^---[\s\S]*?---\n/, "");
+
+  const elements: React.ReactNode[] = [];
+  let currentIndex = 0;
+
+  // コードブロックを処理
+  const codeBlockRegex = /```(\w*)\n?([\s\S]*?)```/gim;
+  let match;
+
+  while ((match = codeBlockRegex.exec(content)) !== null) {
+    const [fullMatch, language, code] = match;
+    const startIndex = match.index;
+
+    // コードブロック前のテキストを処理
+    if (startIndex > currentIndex) {
+      const beforeText = content.slice(currentIndex, startIndex);
+      const textElements = processTextContent(beforeText);
+      elements.push(...textElements);
+    }
+
+    // CodeBlockコンポーネントを作成
+    const codeBlock = React.createElement(CodeBlock, {
+      key: `codeblock-${startIndex}`,
+      code: code.trim(),
+      language: language || "text",
+    });
+    elements.push(codeBlock);
+
+    currentIndex = startIndex + fullMatch.length;
+  }
+
+  // 残りのテキストを処理
+  if (currentIndex < content.length) {
+    const remainingText = content.slice(currentIndex);
+    const textElements = processTextContent(remainingText);
+    elements.push(...textElements);
+  }
+
+  return elements;
+}
+
+/**
+ * テキストコンテンツをHTMLに変換してReact要素を作成
+ */
+function processTextContent(text: string): React.ReactNode[] {
+  if (!text.trim()) return [];
+
+  const htmlContent = fallbackMarkdownToHTML(text);
+  return [
+    React.createElement("div", {
+      key: `text-${Math.random()}`,
+      dangerouslySetInnerHTML: { __html: htmlContent },
+    }),
+  ];
+}
+
+/**
  * フォールバック用の基本的なMarkdownからHTMLへの変換
  */
 function fallbackMarkdownToHTML(mdxContent: string): string {
@@ -42,16 +100,26 @@ function fallbackMarkdownToHTML(mdxContent: string): string {
   let html = mdxContent.replace(/^---[\s\S]*?---\n/, "");
 
   // 1. コードブロック処理（最初に実行）
-  html = html.replace(/```[\s\S]*?```/gim, (match) => {
-    const codeContent = match.replace(/^```\w*\n?/, "").replace(/\n?```$/, "");
-    const escapedCode = escapeHtml(codeContent);
-    return `<pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto mb-4"><code class="text-sm font-mono text-gray-800 dark:text-gray-200">${escapedCode}</code></pre>`;
-  });
+  html = html.replace(
+    /```(\w*)\n?([\s\S]*?)```/gim,
+    (match, language, codeContent) => {
+      const escapedCode = escapeHtml(codeContent);
+      const lang = language || "text";
+      return `<div class="relative group bg-black rounded-lg mb-4">
+      <div class="flex items-center justify-between bg-black px-4 py-2 rounded-t-lg border-b border-gray-600">
+        <span class="text-sm font-medium text-gray-300">${lang}</span>
+      </div>
+      <div class="bg-black p-4 rounded-b-lg overflow-x-auto mt-0">
+        <pre class="text-sm text-gray-100"><code class="language-${lang}">${escapedCode}</code></pre>
+      </div>
+    </div>`;
+    }
+  );
 
   // 2. インラインコード処理（コードブロック処理の直後）
   html = html.replace(/`([^`]+)`/gim, (match, code) => {
     const escapedCode = escapeHtml(code);
-    return `<code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono text-gray-800 dark:text-gray-200">${escapedCode}</code>`;
+    return `<code class="inline-code bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono text-gray-800 dark:text-gray-200">${escapedCode}</code>`;
   });
 
   // 3. テーブル処理
@@ -147,6 +215,9 @@ function fallbackMarkdownToHTML(mdxContent: string): string {
   // 9. 段落タグで囲む
   html = "<p>" + html + "</p>";
 
+  // 10. 最終的なバッククォートクリーンアップ（全ての処理の後）
+  html = html.replace(/`/g, "");
+
   return html;
 }
 
@@ -154,36 +225,32 @@ function fallbackMarkdownToHTML(mdxContent: string): string {
  * ヘッダー内のMarkdown処理
  */
 function processHeaderContent(content: string): string {
-  return (
-    content
-      // 太字
-      .replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>")
-      // 斜体
-      .replace(/\*(.*?)\*/gim, "<em>$1</em>")
-      // インラインコード（バッククオート）
-      .replace(/`([^`]+)`/gim, (match, code) => {
-        const escapedCode = escapeHtml(code);
-        return `<code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono text-gray-800 dark:text-gray-200">${escapedCode}</code>`;
-      })
-  );
+  let processed = content
+    // 太字
+    .replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>")
+    // 斜体
+    .replace(/\*(.*?)\*/gim, "<em>$1</em>");
+
+  // 残ったバッククォートを削除
+  processed = processed.replace(/`/g, "");
+
+  return processed;
 }
 
 /**
  * テーブルセル内のMarkdown処理
  */
 function processTableCell(cell: string): string {
-  return (
-    cell
-      // 太字
-      .replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>")
-      // 斜体
-      .replace(/\*(.*?)\*/gim, "<em>$1</em>")
-      // インラインコード（バッククオート）
-      .replace(/`([^`]+)`/gim, (match, code) => {
-        const escapedCode = escapeHtml(code);
-        return `<code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono text-gray-800 dark:text-gray-200">${escapedCode}</code>`;
-      })
-  );
+  let processed = cell
+    // 太字
+    .replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>")
+    // 斜体
+    .replace(/\*(.*?)\*/gim, "<em>$1</em>");
+
+  // 残ったバッククォートを削除
+  processed = processed.replace(/`/g, "");
+
+  return processed;
 }
 
 /**
@@ -195,6 +262,6 @@ function escapeHtml(text: string): string {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;")
-    .replace(/#/g, "&#35;");
+    .replace(/'/g, "&apos;")
+    .replace(/#/g, "&num;");
 }

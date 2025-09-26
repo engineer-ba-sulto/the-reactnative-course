@@ -66,7 +66,15 @@ const components = {
     }
 
     return (
-      <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono text-gray-800 dark:text-gray-200">
+      <code
+        className="inline-code bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono text-gray-800 dark:text-gray-200"
+        style={
+          {
+            "--tw-content": '""',
+            content: '""',
+          } as React.CSSProperties
+        }
+      >
         {children}
       </code>
     );
