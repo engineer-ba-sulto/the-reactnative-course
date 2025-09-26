@@ -1,8 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import hljs from "highlight.js";
 import { Check, Copy } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface CodeBlockProps {
   code: string;
@@ -11,6 +12,21 @@ interface CodeBlockProps {
 
 export function CodeBlock({ code, language }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
+  const [highlightedCode, setHighlightedCode] = useState<string>("");
+
+  useEffect(() => {
+    try {
+      if (language && language !== "text") {
+        const result = hljs.highlight(code, { language });
+        setHighlightedCode(result.value);
+      } else {
+        setHighlightedCode(code);
+      }
+    } catch (error) {
+      console.error("Highlight.js error:", error);
+      setHighlightedCode(code);
+    }
+  }, [code, language]);
 
   const copyToClipboard = async () => {
     try {
@@ -39,9 +55,12 @@ export function CodeBlock({ code, language }: CodeBlockProps) {
           )}
         </Button>
       </div>
-      <div className="bg-black p-4 rounded-b-lg overflow-x-auto mt-0">
+      <div className="bg-black p-0 rounded-b-lg overflow-x-auto mt-0">
         <pre className="text-gray-100 bg-black mt-0 mb-0 p-0">
-          <code className={`language-${language}`}>{code}</code>
+          <code
+            className={`language-${language} hljs`}
+            dangerouslySetInnerHTML={{ __html: highlightedCode }}
+          />
         </pre>
       </div>
     </div>
