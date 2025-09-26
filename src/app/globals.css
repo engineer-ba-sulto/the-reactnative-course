@@ -160,3 +160,23 @@
 @utility container {
   @apply mx-auto px-4 sm:px-6 lg:px-8;
 }
+
+/* シンプルなコードブロック用CSS */
+.language-javascript,
+.language-js,
+.language-jsx,
+.language-ts,
+.language-tsx,
+.language-typescript,
+.language-json,
+.language-css,
+.language-html,
+.language-bash,
+.language-python,
+.language-sql,
+.language-yaml,
+.language-xml,
+.language-diff,
+.language-text {
+  color: #f8f8f2; /* 統一された白色 */
+}

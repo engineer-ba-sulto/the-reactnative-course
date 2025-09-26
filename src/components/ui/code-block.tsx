@@ -2,9 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Check, Copy } from "lucide-react";
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
-import { createHighlighter, type Highlighter } from "shiki";
+import { useState } from "react";
 
 interface CodeBlockProps {
   code: string;
@@ -13,74 +11,6 @@ interface CodeBlockProps {
 
 export function CodeBlock({ code, language }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
-  const [highlighter, setHighlighter] = useState<Highlighter | null>(null);
-  const [highlightedCode, setHighlightedCode] = useState<string>("");
-  const { theme, resolvedTheme } = useTheme();
-
-  useEffect(() => {
-    const initHighlighter = async () => {
-      try {
-        const hl = await createHighlighter({
-          themes: ["github-dark", "github-light"],
-          langs: [
-            "javascript",
-            "typescript",
-            "jsx",
-            "tsx",
-            "json",
-            "css",
-            "html",
-            "bash",
-            "shell",
-            "python",
-            "java",
-            "cpp",
-            "c",
-            "sql",
-            "markdown",
-            "yaml",
-            "xml",
-            "diff",
-            "text",
-          ],
-        });
-        setHighlighter(hl);
-      } catch (error) {
-        console.error("Failed to initialize highlighter:", error);
-      }
-    };
-
-    initHighlighter();
-  }, []);
-
-  useEffect(() => {
-    if (highlighter && code) {
-      try {
-        const currentTheme = resolvedTheme || theme || "dark";
-        const html = highlighter.codeToHtml(code, {
-          lang: language || "text",
-          theme: currentTheme === "dark" ? "github-dark" : "github-light",
-        });
-        // preタグにmt-0クラスを追加
-        const processedHtml = html.replace(
-          /<pre([^>]*)>/g,
-          (match, attributes) => {
-            if (attributes.includes("class=")) {
-              // 既存のclass属性がある場合、mt-0を追加
-              return match.replace(/class="([^"]*)"/, 'class="$1 mt-0"');
-            } else {
-              // class属性がない場合、新しく追加
-              return `<pre${attributes} class="mt-0">`;
-            }
-          }
-        );
-        setHighlightedCode(processedHtml);
-      } catch (error) {
-        console.error("Failed to highlight code:", error);
-        setHighlightedCode(code);
-      }
-    }
-  }, [highlighter, code, language, theme, resolvedTheme]);
 
   const copyToClipboard = async () => {
     try {
@@ -93,8 +23,8 @@ export function CodeBlock({ code, language }: CodeBlockProps) {
   };
 
   return (
-    <div className="relative group bg-[#24292e] rounded-lg">
-      <div className="flex items-center justify-between bg-black px-4 py-2 rounded-t-lg">
+    <div className="relative group bg-black rounded-lg mb-4">
+      <div className="flex items-center justify-between bg-black px-4 py-2 rounded-t-lg border-b border-gray-600">
         <span className="text-sm font-medium text-gray-300">{language}</span>
         <Button
           variant="ghost"
@@ -109,13 +39,11 @@ export function CodeBlock({ code, language }: CodeBlockProps) {
           )}
         </Button>
       </div>
-      {highlightedCode ? (
-        <div dangerouslySetInnerHTML={{ __html: highlightedCode }} />
-      ) : (
+      <div className="bg-black p-4 rounded-b-lg overflow-x-auto mt-0">
         <pre className="text-sm text-gray-100 mt-0">
           <code className={`language-${language}`}>{code}</code>
         </pre>
-      )}
+      </div>
     </div>
   );
 }
