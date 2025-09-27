@@ -9,7 +9,7 @@ export const auth = betterAuth({
   // Ensure Better Auth endpoints are mounted under /api/auth
   basePath: "/api/auth",
   database: drizzleAdapter(db, {
-    provider: "pg",
+    provider: "sqlite",
     usePlural: true,
   }),
   advanced: {
