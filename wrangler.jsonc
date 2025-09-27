@@ -20,6 +20,14 @@
       "binding": "ARTICLES_BUCKET",
       "bucket_name": "react-native-course-r2"
     }
+  ],
+  "d1_databases": [
+    {
+      "binding": "the_reactnative_course_db",
+      "database_name": "the-reactnative-course-db",
+      "database_id": "e261edde-c78a-41c6-9dac-8a9c1083d63f",
+      "migrations_dir": "src/db/migrations"
+    }
   ]
   /**
    * Smart Placement
