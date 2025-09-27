@@ -33,7 +33,7 @@ export async function Header() {
               <Link href="#apps">アプリ実績</Link>
             </Button>
             <Button asChild variant="link">
-              <Link href="/articles">技術記事</Link>
+              <Link href="#articles">技術記事</Link>
             </Button>
             <Button
               asChild
