@@ -1,4 +1,3 @@
-import { Header } from "@/components/Header";
 import type { Metadata } from "next";
 import { Noto_Sans_JP } from "next/font/google";
 import { Toaster } from "sonner";
