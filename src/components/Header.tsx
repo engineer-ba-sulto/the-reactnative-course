@@ -37,7 +37,7 @@ export async function Header() {
             <Button asChild variant="link">
               <Link href="#articles">技術記事</Link>
             </Button>
-            <Button
+            {/* <Button
               asChild
               variant="outline"
               className="bg-green-500 text-green-900 hover:bg-green-600"
@@ -45,7 +45,7 @@ export async function Header() {
               <Link href="#waiting-list" className="text-white font-bold">
                 ウェイティングリストに登録
               </Link>
-            </Button>
+            </Button> */}
           </div>
         </nav>
       </div>

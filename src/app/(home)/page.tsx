@@ -1,7 +1,7 @@
 import AppsList from "@/components/AppList";
 import ArticlesList from "@/components/ArticlesList";
 import Hero from "@/components/Hero";
-import WaitingList from "@/components/WaitingList";
+// import WaitingList from "@/components/WaitingList";
 
 export default function Home() {
   return (
@@ -9,7 +9,7 @@ export default function Home() {
       <Hero />
       <AppsList />
       <ArticlesList />
-      <WaitingList />
+      {/* <WaitingList /> */}
     </main>
   );
 }
