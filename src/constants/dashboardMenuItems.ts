@@ -1,4 +1,8 @@
-import { Settings, User } from "lucide-react";
+import {
+	User,
+	// BookOpen,
+	// Settings,
+} from "lucide-react";
 
 // メニューデータ
 export const dashboardMenuItems = [
@@ -12,9 +16,9 @@ export const dashboardMenuItems = [
   //   url: "/dashboard/courses",
   //   icon: BookOpen,
   // },
-  {
-    title: "設定",
-    url: "/dashboard/settings",
-    icon: Settings,
-  },
+  // {
+  //   title: "設定",
+  //   url: "/dashboard/settings",
+  //   icon: Settings,
+  // },
 ];
