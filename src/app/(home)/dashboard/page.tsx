@@ -3,10 +3,10 @@ import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { auth } from "@/lib/auth";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import Image from "next/image";
+// import Image from "next/image";
 
 export const metadata: Metadata = {
-  title: "アカウント",
+  title: "プロフィール情報",
 };
 
 export default async function DashboardPage() {
@@ -20,7 +20,6 @@ export default async function DashboardPage() {
       <DashboardHeader title={metadata.title} />
       <div className="grid gap-6">
         <div className="rounded-lg border p-6">
-          <h2 className="text-xl font-semibold mb-4">プロフィール情報</h2>
           <Table>
             <TableBody>
               <TableRow>
@@ -35,7 +34,7 @@ export default async function DashboardPage() {
                   {session!.user.email || "未設定"}
                 </TableCell>
               </TableRow>
-              <TableRow>
+              {/* <TableRow>
                 <TableCell className="font-medium">画像URL</TableCell>
                 <TableCell className="text-muted-foreground">
                   {session!.user.image ? (
@@ -55,28 +54,21 @@ export default async function DashboardPage() {
                     "未設定"
                   )}
                 </TableCell>
-              </TableRow>
-              <TableRow>
+              </TableRow> */}
+              {/* <TableRow>
                 <TableCell className="font-medium">ユーザー名</TableCell>
                 <TableCell className="text-muted-foreground">
                   {session!.user.username || "未設定"}
                 </TableCell>
-              </TableRow>
-              <TableRow>
+              </TableRow> */}
+              {/* <TableRow>
                 <TableCell className="font-medium">表示ユーザー名</TableCell>
                 <TableCell className="text-muted-foreground">
                   {session!.user.displayUsername || "未設定"}
                 </TableCell>
-              </TableRow>
+              </TableRow> */}
             </TableBody>
           </Table>
-        </div>
-
-        <div className="rounded-lg border p-6">
-          <h2 className="text-xl font-semibold mb-4">アカウント設定</h2>
-          <p className="text-muted-foreground">
-            ここにアカウント設定のオプションが表示されます。
-          </p>
         </div>
       </div>
     </div>
