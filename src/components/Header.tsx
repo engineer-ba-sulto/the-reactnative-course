@@ -1,14 +1,14 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import UserDropdownMenu from "@/components/UserDropdownMenu";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-export async function Header() {
-  const authInstance = await auth();
-  const session = await authInstance.api.getSession({
-    headers: await headers(),
-  });
+export function Header() {
+  const { data: session } = authClient.useSession();
+  const pathname = usePathname();
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b">
@@ -17,13 +17,20 @@ export async function Header() {
           React Native コース
         </Link>
         <nav>
-          {/* TODO: 認証機能を有効にする場合は、下記のコメントアウトを外してください */}
           <div className="flex gap-2">
             <Button asChild variant="link">
-              <Link href="#articles">技術記事</Link>
+              <Link
+                href={`${
+                  pathname === "/dashboard" ? "/articles" : "#articles"
+                }`}
+              >
+                技術記事
+              </Link>
             </Button>
             <Button asChild variant="link">
-              <Link href="#apps">アプリ実績</Link>
+              <Link href={`${pathname === "/dashboard" ? "/#apps" : "#apps"}`}>
+                アプリ実績
+              </Link>
             </Button>
             {session?.user ? (
               <UserDropdownMenu />
