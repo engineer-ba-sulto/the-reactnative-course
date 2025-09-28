@@ -21,7 +21,6 @@ import { useFormSubmission } from "@/hooks/use-form-submission";
 import { useSignupForm } from "@/hooks/use-form-validation";
 import { cn } from "@/lib/utils";
 import { SignUpEmailInput } from "@/types/auth";
-
 import Link from "next/link";
 
 export function SigninForm({
@@ -133,8 +132,8 @@ export function SigninForm({
         </CardContent>
       </Card>
       <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        続行をクリックすることで、<a href="#">利用規約</a>と
-        <a href="#">プライバシーポリシー</a>
+        続行をクリックすることで、<Link href="/term-of-service">利用規約</Link>
+        と<Link href="/privacy-policy">プライバシーポリシー</Link>
         に同意したものとみなされます。
       </div>
     </div>

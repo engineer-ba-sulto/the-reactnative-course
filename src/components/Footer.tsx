@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function Footer() {
   return (
     <footer className="border-t bg-gray-50 dark:bg-gray-900">
@@ -14,18 +16,18 @@ export function Footer() {
             >
               お問い合わせ
             </a>
-            <a
-              href="#"
+            <Link
+              href="/privacy-policy"
               className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors text-sm"
             >
               プライバシーポリシー
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              href="/term-of-service"
               className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors text-sm"
             >
               利用規約
-            </a>
+            </Link>
           </div>
         </div>
       </div>
