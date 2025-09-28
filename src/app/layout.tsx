@@ -26,7 +26,6 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <body className={`${notoSansJP.className} antialiased`}>
-        <Header />
         {children}
         <Toaster />
       </body>
