@@ -3,17 +3,12 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "設定",
-  description: "アプリケーションの設定と環境の管理",
 };
 
 export default async function SettingsPage() {
   return (
     <div className="space-y-6">
-      <DashboardHeader
-        title={metadata.title}
-        description={metadata.description}
-      />
-
+      <DashboardHeader title={metadata.title} />
       <div className="grid gap-6">
         <div className="rounded-lg border p-6">
           <h2 className="text-xl font-semibold mb-4">一般設定</h2>

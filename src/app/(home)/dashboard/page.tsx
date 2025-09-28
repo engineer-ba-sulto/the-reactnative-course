@@ -7,21 +7,17 @@ import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "アカウント",
-  description: "アカウント情報の管理とプロフィール設定",
 };
 
 export default async function DashboardPage() {
   const authInstance = await auth();
   const session = await authInstance.api.getSession({
     headers: await headers(),
-  });
+	});
+	
   return (
     <div className="space-y-6">
-      <DashboardHeader
-        title={metadata.title}
-        description={metadata.description}
-      />
-
+      <DashboardHeader title={metadata.title} />
       <div className="grid gap-6">
         <div className="rounded-lg border p-6">
           <h2 className="text-xl font-semibold mb-4">プロフィール情報</h2>
