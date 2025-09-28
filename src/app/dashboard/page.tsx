@@ -11,7 +11,8 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardPage() {
-  const session = await auth.api.getSession({
+  const authInstance = await auth();
+  const session = await authInstance.api.getSession({
     headers: await headers(),
   });
   return (

@@ -1,11 +1,26 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
+"use server";
+
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { drizzle } from "drizzle-orm/d1";
 import * as authSchema from "./schemas/auth";
 
-const client = postgres(process.env.DATABASE_URL!, { prepare: false });
-export const db = drizzle({
-  client,
-  schema: {
-    ...authSchema,
-  },
-});
+// Cloudflare D1の場合、ランタイムでデータベースインスタンスを受け取る
+export const getDb = async () => {
+  const { env } = await getCloudflareContext({ async: true });
+  return drizzle(env.the_reactnative_course_db, {
+    schema: {
+      ...authSchema,
+    },
+  });
+};
+
+// 同期的なデータベースインスタンス（開発用）
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let dbInstance: any = null;
+
+export const db = async () => {
+  if (!dbInstance) {
+    dbInstance = await getDb();
+  }
+  return dbInstance;
+};
