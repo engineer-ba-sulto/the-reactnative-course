@@ -9,7 +9,8 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth.api.getSession({
+  const authInstance = await auth();
+  const session = await authInstance.api.getSession({
     headers: await headers(),
   });
   if (!session || !session?.user) {

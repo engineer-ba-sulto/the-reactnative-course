@@ -2,9 +2,11 @@ import { Button } from "@/components/ui/button";
 // import { auth } from "@/lib/auth";
 // import { headers } from "next/headers";
 import Link from "next/link";
+// import UserDropdownMenu from "./UserDropdownMenu";
 
 export async function Header() {
-  // const session = await auth.api.getSession({
+  // const authInstance = await auth();
+  // const session = await authInstance.api.getSession({
   //   headers: await headers(),
   // });
 
@@ -18,7 +20,7 @@ export async function Header() {
           {/* TODO: 認証機能を有効にする場合は、下記のコメントアウトを外してください */}
           {/* {session?.user ? (
             <UserDropdownMenu />
-          ) : 
+          ) : (
             <div className="flex gap-2">
               <Button asChild variant="outline">
                 <Link href="/signin">Signin</Link>
@@ -27,7 +29,7 @@ export async function Header() {
                 <Link href="/login">Login</Link>
               </Button>
             </div>
-						)} */}
+          )} */}
           <div className="flex gap-2">
             <Button asChild variant="link">
               <Link href="#apps">アプリ実績</Link>

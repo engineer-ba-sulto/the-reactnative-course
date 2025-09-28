@@ -31,7 +31,8 @@ export async function signUpEmail(formData: FormData): Promise<AuthResult> {
 
     const { name, email, password } = validationResult.data;
 
-    const res = await auth.api.signUpEmail({
+    const authInstance = await auth();
+    const res = await authInstance.api.signUpEmail({
       body: { name, email, password },
     });
 
@@ -67,7 +68,8 @@ export async function signInEmail(formData: FormData): Promise<AuthResult> {
 
     const { email, password } = validationResult.data;
 
-    const res = await auth.api.signInEmail({
+    const authInstance = await auth();
+    const res = await authInstance.api.signInEmail({
       body: { email, password },
     });
 
@@ -94,7 +96,8 @@ export async function signInEmail(formData: FormData): Promise<AuthResult> {
 
 export async function signOut(): Promise<AuthResult> {
   try {
-    await auth.api.signOut({
+    const authInstance = await auth();
+    await authInstance.api.signOut({
       headers: await headers(),
     });
     revalidatePath("/");
@@ -112,7 +115,8 @@ export async function signOut(): Promise<AuthResult> {
 
 export async function signOutAction(): Promise<void> {
   try {
-    await auth.api.signOut({
+    const authInstance = await auth();
+    await authInstance.api.signOut({
       headers: await headers(),
     });
     revalidatePath("/");
