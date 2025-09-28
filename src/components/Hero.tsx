@@ -1,6 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
-import { Button } from "./ui/button";
+// import Link from "next/link";
+// import { Button } from "./ui/button";
 
 export default function Hero() {
   return (
@@ -26,7 +26,7 @@ export default function Hero() {
               <p>バイブコーディングには、頼りません！</p>
               <p>効率よく開発するための、正しいAIの活用方法を学びましょう。</p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-4">
+            {/* <div className="flex flex-col sm:flex-row gap-4">
               <Button
                 asChild
                 variant="outline"
@@ -38,7 +38,7 @@ export default function Hero() {
                   </span>
                 </Link>
               </Button>
-            </div>
+            </div> */}
           </div>
 
           {/* 右側: 画像 */}
