@@ -7,8 +7,8 @@ export default function Home() {
   return (
     <main className="min-h-screen">
       <Hero />
-      <AppsList />
       <ArticlesList />
+      <AppsList />
       {/* <WaitingList /> */}
     </main>
   );
