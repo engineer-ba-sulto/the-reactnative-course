@@ -1,6 +1,10 @@
 "use client";
 
-import { signInEmailSchema, signUpEmailSchema } from "@/zod/certification";
+import {
+  accountUpdateSchema,
+  signInEmailSchema,
+  signUpEmailSchema,
+} from "@/zod/certification";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
@@ -22,6 +26,16 @@ export const useSignupForm = () => {
       email: "",
       password: "",
       confirmPassword: "",
+    },
+  });
+};
+
+export const useAccountUpdateForm = (initialName = "", initialEmail = "") => {
+  return useForm({
+    resolver: zodResolver(accountUpdateSchema),
+    defaultValues: {
+      name: initialName,
+      email: initialEmail,
     },
   });
 };

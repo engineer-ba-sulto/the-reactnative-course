@@ -1,3 +1,4 @@
+import { AccountUpdateForm } from "@/components/AccountUpdateForm";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import type { Metadata } from "next";
 
@@ -10,24 +11,14 @@ export default async function SettingsPage() {
     <div className="space-y-6">
       <DashboardHeader title={metadata.title} />
       <div className="grid gap-6">
+        <AccountUpdateForm
+          initialName="山田太郎"
+          initialEmail="yamada@example.com"
+        />
         <div className="rounded-lg border p-6">
-          <h2 className="text-xl font-semibold mb-4">一般設定</h2>
-          <p className="text-muted-foreground">
-            言語、テーマ、通知などの基本設定が表示されます。
-          </p>
-        </div>
-
-        <div className="rounded-lg border p-6">
-          <h2 className="text-xl font-semibold mb-4">プライバシー設定</h2>
+          <h2 className="text-xl font-semibold mb-4">パスワード設定</h2>
           <p className="text-muted-foreground">
             データの取り扱いやプライバシーに関する設定が表示されます。
-          </p>
-        </div>
-
-        <div className="rounded-lg border p-6">
-          <h2 className="text-xl font-semibold mb-4">セキュリティ設定</h2>
-          <p className="text-muted-foreground">
-            パスワード変更や二要素認証などのセキュリティ設定が表示されます。
           </p>
         </div>
       </div>

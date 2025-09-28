@@ -1,7 +1,11 @@
 "use client";
 
 import { signInEmail, signUpEmail } from "@/actions/certification";
-import { SignInEmailInput, SignUpEmailInput } from "@/types/auth";
+import {
+  AccountUpdateInput,
+  SignInEmailInput,
+  SignUpEmailInput,
+} from "@/types/auth";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
@@ -63,5 +67,28 @@ export const useFormSubmission = () => {
     });
   };
 
-  return { handleLogin, handleSignup, isPending };
+  const handleAccountUpdate = (data: AccountUpdateInput) => {
+    startTransition(async () => {
+      try {
+        // TODO: 実際のAPI呼び出しを実装
+        console.log("アカウント更新データ:", data);
+
+        // 模擬的な遅延
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        // TODO: 成功時の処理（トースト表示など）
+        console.log("アカウント更新完了");
+        toast.success("アカウント情報を更新しました");
+      } catch (error) {
+        console.error("Account update error:", error);
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "アカウント更新に失敗しました"
+        );
+      }
+    });
+  };
+
+  return { handleLogin, handleSignup, handleAccountUpdate, isPending };
 };

@@ -1,9 +1,14 @@
-import { signInEmailSchema, signUpEmailSchema } from "@/zod/certification";
+import {
+  accountUpdateSchema,
+  signInEmailSchema,
+  signUpEmailSchema,
+} from "@/zod/certification";
 import z from "zod";
 
 // 型定義のエクスポート
 export type SignUpEmailInput = z.infer<typeof signUpEmailSchema>;
 export type SignInEmailInput = z.infer<typeof signInEmailSchema>;
+export type AccountUpdateInput = z.infer<typeof accountUpdateSchema>;
 
 // 型定義
 export type AuthResult = {
