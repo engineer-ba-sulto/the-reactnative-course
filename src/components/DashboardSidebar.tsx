@@ -10,7 +10,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { menuItems } from "@/constants/menuItems";
+import { dashboardMenuItems } from "@/constants/dashboardMenuItems";
 import Link from "next/link";
 
 export function DashboardSidebar({
@@ -22,7 +22,7 @@ export function DashboardSidebar({
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="p-5">
-              {menuItems.map((item) => (
+              {dashboardMenuItems.map((item) => (
                 <SidebarMenuItem key={item.title} className="py-1">
                   <SidebarMenuButton asChild>
                     <Link href={item.url} className="flex items-center gap-2">
