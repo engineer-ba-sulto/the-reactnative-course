@@ -2,6 +2,7 @@ import type { ArticleMetadata, ArticleWithContent } from "@/types/article";
 import fs from "fs";
 import matter from "gray-matter";
 import path from "path";
+import { PublicationDateGuard } from "./date-utils";
 
 /**
  * ローカルのMDXファイルから記事の一覧を取得する（開発環境用）
@@ -16,12 +17,23 @@ export async function getAllArticlesFromLocal(): Promise<ArticleWithContent[]> {
         .filter((file) => file.endsWith(".mdx"))
         .map(async (file) => {
           const slug = file.replace(/\.mdx$/, "");
-          return await getArticleBySlugFromLocal(slug);
+          try {
+            return await getArticleBySlugFromLocal(slug);
+          } catch {
+            // 未公開や欠損は一覧からスキップ
+            return null;
+          }
         })
     );
 
+    // nullを除外
+    const present = articles.filter((a): a is ArticleWithContent => a !== null);
+
+    // 未来や本日以降は非公開扱い: まず公開済みだけに絞る
+    const published = PublicationDateGuard.filterPublished(present);
+
     // 公開日でソート（新しい順）
-    return articles.sort(
+    return published.sort(
       (a, b) =>
         new Date(b.metadata.publishedAt).getTime() -
         new Date(a.metadata.publishedAt).getTime()
@@ -43,28 +55,38 @@ export async function getArticleBySlugFromLocal(
     throw new Error("Invalid slug provided");
   }
 
+  const filePath = path.join(
+    process.cwd(),
+    "src",
+    "content",
+    "articles",
+    `${slug}.mdx`
+  );
+
+  let fileContents: string;
   try {
-    const filePath = path.join(
-      process.cwd(),
-      "src",
-      "content",
-      "articles",
-      `${slug}.mdx`
-    );
-    const fileContents = fs.readFileSync(filePath, "utf8");
-
-    // MDXファイルからメタデータを抽出
-    const { data, content } = matter(fileContents);
-
-    return {
-      slug,
-      metadata: data as ArticleMetadata,
-      content,
-    };
+    fileContents = fs.readFileSync(filePath, "utf8");
   } catch (error) {
+    // 実ファイルが無いなどのケースのみログ
     console.error(`Error reading article ${slug} from local files:`, error);
     throw new Error(`Article not found: ${slug}`);
   }
+
+  // MDXファイルからメタデータを抽出
+  const { data, content } = matter(fileContents);
+
+  const article = {
+    slug,
+    metadata: data as ArticleMetadata,
+    content,
+  } as ArticleWithContent;
+
+  // 未公開の場合は上位で握りつぶすため、ここではログを出さずに投げる
+  if (!PublicationDateGuard.isPublished(article.metadata.publishedAt)) {
+    throw new Error("UNPUBLISHED");
+  }
+
+  return article;
 }
 
 /**
