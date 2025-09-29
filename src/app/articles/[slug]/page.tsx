@@ -5,6 +5,7 @@ import {
   getArticleBySlugFromR2,
   getArticleSlugsFromR2,
 } from "@/lib/r2-articles";
+import { formatInTimeZone } from "date-fns-tz";
 import { ArrowLeft, Calendar, Clock } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -100,8 +101,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <div className="flex items-center gap-2 mb-4 text-sm text-gray-500 dark:text-gray-400">
             <span className="flex items-center gap-1">
               <Calendar className="h-4 w-4" />
-              {new Date(article.metadata.publishedAt).toLocaleDateString(
-                "ja-JP"
+              {formatInTimeZone(
+                new Date(article.metadata.publishedAt),
+                "Asia/Tokyo",
+                "yyyy/MM/dd"
               )}
             </span>
             <span className="flex items-center gap-1">
@@ -130,8 +133,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
             <div className="text-sm text-gray-500 dark:text-gray-400">
               最終更新:{" "}
-              {new Date(article.metadata.publishedAt).toLocaleDateString(
-                "ja-JP"
+              {formatInTimeZone(
+                new Date(article.metadata.publishedAt),
+                "Asia/Tokyo",
+                "yyyy/MM/dd"
               )}
             </div>
           </div>

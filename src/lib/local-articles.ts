@@ -1,4 +1,5 @@
 import type { ArticleMetadata, ArticleWithContent } from "@/types/article";
+import { compareDesc, parseISO } from "date-fns";
 import fs from "fs";
 import matter from "gray-matter";
 import path from "path";
@@ -33,10 +34,15 @@ export async function getAllArticlesFromLocal(): Promise<ArticleWithContent[]> {
     const published = PublicationDateGuard.filterPublished(present);
 
     // 公開日でソート（新しい順）
-    return published.sort(
-      (a, b) =>
-        new Date(b.metadata.publishedAt).getTime() -
-        new Date(a.metadata.publishedAt).getTime()
+    return published.sort((a, b) =>
+      compareDesc(
+        typeof a.metadata.publishedAt === "string"
+          ? parseISO(a.metadata.publishedAt)
+          : a.metadata.publishedAt,
+        typeof b.metadata.publishedAt === "string"
+          ? parseISO(b.metadata.publishedAt)
+          : b.metadata.publishedAt
+      )
     );
   } catch (error) {
     console.error("Error reading articles from local files:", error);

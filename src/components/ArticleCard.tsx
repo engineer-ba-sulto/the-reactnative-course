@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Article } from "@/types/article";
+import { formatInTimeZone } from "date-fns-tz";
 import Link from "next/link";
 
 export default function ArticleCard({
@@ -32,7 +33,11 @@ export default function ArticleCard({
         {/* 公開日とリンク */}
         <div className="flex items-center justify-between pt-4">
           <span className="text-sm text-gray-500">
-            {new Date(article.publishedAt).toLocaleDateString("ja-JP")}
+            {formatInTimeZone(
+              new Date(article.publishedAt),
+              "Asia/Tokyo",
+              "yyyy/MM/dd"
+            )}
           </span>
           <Link href={`/articles/${slug}`}>
             <Button variant="outline" size="sm">

@@ -1,12 +1,13 @@
 import type { ArticleMetadata, ArticleWithContent } from "@/types/article";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { compareDesc, parseISO } from "date-fns";
 import matter from "gray-matter";
+import { PublicationDateGuard } from "./date-utils";
 import {
   getAllArticlesFromLocal,
   getArticleBySlugFromLocal,
   getArticleSlugsFromLocal,
 } from "./local-articles";
-import { PublicationDateGuard } from "./date-utils";
 
 /**
  * R2バケットから記事の一覧を取得する
@@ -48,10 +49,15 @@ export async function getAllArticlesFromR2(): Promise<ArticleWithContent[]> {
     const published = PublicationDateGuard.filterPublished(present);
 
     // 公開日でソート（新しい順）
-    return published.sort(
-      (a, b) =>
-        new Date(b.metadata.publishedAt).getTime() -
-        new Date(a.metadata.publishedAt).getTime()
+    return published.sort((a, b) =>
+      compareDesc(
+        typeof a.metadata.publishedAt === "string"
+          ? parseISO(a.metadata.publishedAt)
+          : a.metadata.publishedAt,
+        typeof b.metadata.publishedAt === "string"
+          ? parseISO(b.metadata.publishedAt)
+          : b.metadata.publishedAt
+      )
     );
   } catch (error) {
     console.error("Error reading articles from R2:", error);
