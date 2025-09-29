@@ -159,6 +159,14 @@ function fallbackMarkdownToHTML(mdxContent: string): string {
   );
 
   // 4. ヘッダー処理
+  html = html.replace(/^##### (.*$)/gim, (match, content) => {
+    const processedContent = processHeaderContent(content);
+    return `<h5 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2 mt-4">${processedContent}</h5>`;
+  });
+  html = html.replace(/^#### (.*$)/gim, (match, content) => {
+    const processedContent = processHeaderContent(content);
+    return `<h4 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2 mt-4">${processedContent}</h4>`;
+  });
   html = html.replace(/^### (.*$)/gim, (match, content) => {
     const processedContent = processHeaderContent(content);
     return `<h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3 mt-5">${processedContent}</h3>`;
