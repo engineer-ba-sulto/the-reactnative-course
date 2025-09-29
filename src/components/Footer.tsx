@@ -9,25 +9,39 @@ export function Footer() {
           <p className="text-gray-600 dark:text-gray-400 text-sm">
             © 2025 React Native Course. All rights reserved.
           </p>
-          <div className="flex space-x-6 mt-4 md:mt-0">
-            <a
-              href="mailto:support@example.com"
-              className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors text-sm"
-            >
-              お問い合わせ
-            </a>
-            <Link
-              href="/privacy-policy"
-              className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors text-sm"
-            >
-              プライバシーポリシー
-            </Link>
-            <Link
-              href="/term-of-service"
-              className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors text-sm"
-            >
-              利用規約
-            </Link>
+          <div className="flex items-center gap-x-12 mt-4 md:mt-0">
+            {/* SNS */}
+            <div className="flex space-x-6">
+              <Link
+                href="https://x.com/engineerbasulto"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors text-sm"
+              >
+                X
+              </Link>
+            </div>
+            {/* サイトポリシー */}
+            <div className="flex space-x-6">
+              {/* <a
+                href="mailto:support@example.com"
+                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors text-sm"
+              >
+                お問い合わせ
+              </a> */}
+              <Link
+                href="/privacy-policy"
+                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors text-sm"
+              >
+                プライバシーポリシー
+              </Link>
+              <Link
+                href="/term-of-service"
+                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors text-sm"
+              >
+                利用規約
+              </Link>
+            </div>
           </div>
         </div>
       </div>
