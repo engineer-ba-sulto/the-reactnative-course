@@ -8,8 +8,9 @@ import { App } from "@/types/app";
 // TODO: データベースからアプリ一覧を取得する処理を実装してappListに渡す
 export default function AppList() {
   // 最新2つのアプリのみを表示
-  const latestApps = appList.slice(0, 2);
+  const APPS_LIMIT = 2;
   const appCounts = getAppCountByStatus(appList);
+  const latestApps = appList.slice(0, APPS_LIMIT);
 
   return (
     <section id="apps" className="py-16 px-4 bg-gray-50">
@@ -23,7 +24,6 @@ export default function AppList() {
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               React Nativeで開発した実際のアプリケーションをご紹介します。
             </p>
-
             {/* Status別のアプリ数表示 */}
             <div className="flex flex-wrap justify-center gap-8 mt-6">
               {Object.entries(appCounts).map(([status, count]) => (
@@ -38,16 +38,14 @@ export default function AppList() {
               ))}
             </div>
           </div>
-
           {/* アプリ一覧 */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
             {latestApps.map((app) => (
               <AppCard key={app.id} app={app} />
             ))}
           </div>
-
           {/* もっと見るボタン */}
-          {appList.length > 2 && (
+          {appList.length > APPS_LIMIT && (
             <div className="text-center">
               <Button variant="outline" size="lg">
                 すべてのアプリを見る

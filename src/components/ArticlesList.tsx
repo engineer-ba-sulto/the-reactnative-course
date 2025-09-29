@@ -4,8 +4,9 @@ import { getAllArticlesFromR2 } from "@/lib/r2-articles";
 import Link from "next/link";
 
 export default async function ArticlesList() {
+	const ARTICLES_LIMIT = 6;
   const articles = await getAllArticlesFromR2();
-  const latestArticles = articles.slice(0, 3);
+  const latestArticles = articles.slice(0, ARTICLES_LIMIT);
 
   return (
     <section id="articles" className="py-16 px-4">
@@ -21,7 +22,6 @@ export default async function ArticlesList() {
               初心者から上級者まで、幅広いレベルの内容をカバーしています。
             </p>
           </div>
-
           {/* 記事一覧 */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {latestArticles.map((article) => (
@@ -32,9 +32,8 @@ export default async function ArticlesList() {
               />
             ))}
           </div>
-
           {/* もっと見るボタン */}
-          {articles.length > 2 && (
+          {articles.length > ARTICLES_LIMIT && (
             <div className="text-center">
               <Button variant="outline" size="lg">
                 <Link href="/articles">すべての記事を見る</Link>
