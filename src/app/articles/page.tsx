@@ -1,6 +1,9 @@
 import ArticleCard from "@/components/ArticleCard";
+import { Button } from "@/components/ui/button";
 import { getAllArticlesFromR2 } from "@/lib/r2-articles";
+import { ArrowLeft } from "lucide-react";
 import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "技術記事一覧 | React Native Course",
@@ -14,6 +17,16 @@ export default async function ArticlesPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-7xl mx-auto">
+        {/* 戻るボタン */}
+        <div className="mb-6">
+          <Link href="/">
+            <Button variant="ghost" className="gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              トップページに戻る
+            </Button>
+          </Link>
+        </div>
+
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             技術記事一覧
