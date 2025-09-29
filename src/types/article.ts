@@ -2,7 +2,7 @@
 export interface ArticleMetadata {
   id: string;
   title: string;
-  excerpt: string;
+  description: string;
   publishedAt: string;
   readTime: string;
   category: string;

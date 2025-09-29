@@ -37,10 +37,10 @@ export async function generateMetadata({
     const article = await getArticleBySlugFromR2(slug);
     return {
       title: `${article.metadata.title} | React Native Course`,
-      description: article.metadata.excerpt,
+      description: article.metadata.description,
       openGraph: {
         title: article.metadata.title,
-        description: article.metadata.excerpt,
+        description: article.metadata.description,
         type: "article",
         publishedTime: article.metadata.publishedAt,
         images: article.metadata.imageUrl

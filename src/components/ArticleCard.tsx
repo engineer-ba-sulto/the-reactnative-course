@@ -27,7 +27,7 @@ export default function ArticleCard({
         </h3>
 
         {/* 記事の概要 */}
-        <p className="text-gray-600 line-clamp-3">{article.excerpt}</p>
+        <p className="text-gray-600 line-clamp-3">{article.description}</p>
 
         {/* 公開日とリンク */}
         <div className="flex items-center justify-between pt-4">
