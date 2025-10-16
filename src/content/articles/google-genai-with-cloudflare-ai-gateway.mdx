@@ -1,0 +1,119 @@
+---
+id: "google-genai-with-cloudflare-ai-gateway"
+title: "【重要】Cloudflare AI GatewayとGeminiパッケージ「@google/genai」を繋ぐ正しい方法"
+description: "Cloudflareのドキュメントには、廃止された@google/generative-aiが使用されています。この記事では、最新の@google/genaiを使いAI Gatewayと正しく連携する方法を解説します。"
+publishedAt: "2025-10-16"
+readTime: "5分"
+category: "AI"
+imageUrl: "/opengraph-image.jpg"
+---
+
+# 【重要】Cloudflare AI GatewayとGeminiパッケージ「@google/genai」を繋ぐ正しい方法
+
+**警告**
+**Google の NPM パッケージ `@google/generative-ai` は廃止されました。**
+**新しい `@google/genai` を使用する必要があります。**
+
+今回は、この重要な変更点を踏まえつつ、Cloudflare AI Gateway と Google の最新 Gemini API パッケージ (`@google/genai`) を連携させる**本当に正しい方法**を解説します。
+
+Cloudflare の公式ドキュメントは、**廃止された古いパッケージ (`@google/generative-ai`)** を前提に書かれているため、その情報をもとに最新の`@google/genai`を導入しようとすると、確実に詰まります。
+
+この記事では、Web 上の情報だけではたどり着きにくい、実際の動作するコードを元にした最新の実装方法を共有します。
+
+## 問題点：Cloudflare ドキュメントが「廃止されたパッケージ」を案内している
+
+開発者が混乱する最大の原因は、Cloudflare AI Gateway の公式ドキュメントが、**すでに廃止され、使うべきではない `@google/generative-ai` パッケージを基準に解説している**ことです。
+
+NPM で `@google/generative-ai` を見ると、以下のような警告が表示されます。
+
+> **This package is now deprecated. Please use @google/genai instead.**
+
+この警告に従い `@google/genai` を使うと、ドキュメントに記載されている方法は機能しません。
+
+### Cloudflare 公式ドキュメントに記載されている「動作しない」コード例
+
+以下に、ドキュメントで紹介されているものの、**廃止されたパッケージの古い仕様**であるため、現在の`@google/genai`では動作しない実装パターンを示します。
+
+**ドキュメント記載のパターン：`getGenerativeModel`の第二引数で指定**
+
+```javascript
+// このコードはCloudflareのドキュメントに記載されていますが、
+// `@google/generative-ai`（旧）での書き方であり、
+// `@google/genai`（新）では動作しません。
+
+import { GoogleGenerativeAI } from "@google/generative-ai"; // ドキュメントは旧パッケージを import している
+
+const genAI = new GoogleGenerativeAI(apiKey);
+const model = genAI.getGenerativeModel(
+  { model: "gemini-1.5-flash" },
+  {
+    // この baseUrl の指定方法は現在サポートされていません
+    baseUrl: `https://gateway.ai.cloudflare.com/v1/...`,
+  }
+);
+
+await model.generateContent(["What is Cloudflare?"]);
+```
+
+この方法を試すと、リクエストは Cloudflare AI Gateway を経由せず、Google のデフォルトエンドポイントに直接送信されてしまいます。
+
+**パターン 2：コンストラクタで指定**
+
+```javascript
+// このコードも、現在のSDK仕様ではbaseUrlを指定できません。
+const genAI = new GoogleGenerativeAI(apiKey, {
+  // このオプションは存在しないため、無視されます
+  baseUrl: `https://gateway.ai.cloudflare.com/v1/...`,
+});
+```
+
+これらの方法を試すと、リクエストは Cloudflare AI Gateway を経由せず、Google のデフォルトエンドポイントに直接送信されてしまいます。
+
+## 解決策：`generateContent`メソッドの`config`で指定する
+
+結論から言うと、最新の`@google/genai`パッケージで Cloudflare AI Gateway のエンドポイントを指定する正しい方法は、`generateContent`メソッドの引数内で`config`オブジェクトを渡すことです。
+
+以下が、実際に動作する Hono を使った Cloudflare Worker のコードです。
+
+### 正しい実装コード
+
+```typescript
+import { GoogleGenAI } from "@google/genai";
+
+// Gemini API クライアントを初期化
+const genAI = new GoogleGenAI({
+  apiKey: c.env.GEMINI_API_KEY,
+});
+
+// ★★★ 最重要ポイント ★★★
+// AIコンテンツを生成する際に、config.httpOptions.baseUrl で
+// Cloudflare genAI Gatewayのエンドポイントを指定する
+const response = await genAI.models.generateContent({
+  model: model,
+  contents: prompt,
+  config: {
+    httpOptions: {
+      baseUrl: `https://gateway.ai.cloudflare.com/v1/${c.env.CLOUDFLARE_ACCOUNT_ID}/${c.env.CLOUDFLARE_AI_GATEWAY_NAME}/google-ai-studio`,
+    },
+  },
+});
+```
+
+### ポイントの解説
+
+1.  **クライアントの初期化はシンプルに**: `new GoogleGenAI()`のコンストラクタでは、API キーのみを渡します。`baseUrl`はここでは指定しません。
+2.  **`generateContent`で`config`を渡す**: 実際に API リクエストが発生する`ai.models.generateContent`メソッドの引数オブジェクトに`config`プロパティを追加します。
+3.  **`httpOptions.baseUrl`**: `config`の中に`httpOptions`オブジェクトをネストし、その中に`baseUrl`として Cloudflare AI Gateway のエンドポイント URL を指定します。
+4.  **結果の取得**: レスポンスから生成されたテキストを取得する際は、`response.text`プロパティにアクセスします。（最新の SDK では`response.text()`メソッドの場合もありますが、この実装ではプロパティです）
+
+この方法により、リクエストごとに動的にエンドポイントを切り替えるといった、より柔軟な対応も可能になります。
+
+## まとめ
+
+公式ドキュメントが更新されていない状況では、実際にコードを動かして試行錯誤するしかありません。今回ご紹介した方法は、まさにその試行錯誤の末に見つかった、確実な解決策です。
+
+- `@google/genai`で Cloudflare AI Gateway を使う場合、`generateContent`メソッドの`config.httpOptions.baseUrl`で指定する。
+- コンストラクタや`getGenerativeModel`で`baseUrl`を指定する方法は、古い情報である可能性が高い。
+
+ドキュメントを鵜呑みにせず、実際のコードと向き合うことの重要性を再認識させられますね。
+この記事が、同じ問題に直面している開発者の時間を節約できれば、これ以上嬉しいことはありません。
