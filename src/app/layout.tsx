@@ -18,6 +18,19 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL(getBaseUrl()),
   description: "React Native Course",
+  openGraph: {
+    title: "React Native Course",
+    description: "React Native Course",
+    type: "website",
+    locale: "ja_JP",
+    images: ["/opengraph-image.png", "/opengraph-image.jpg"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "React Native Course",
+    description: "React Native Course",
+    images: ["/opengraph-image.png", "/opengraph-image.jpg"],
+  },
 };
 
 export default function RootLayout({
