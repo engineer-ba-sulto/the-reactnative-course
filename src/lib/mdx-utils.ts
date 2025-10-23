@@ -99,6 +99,23 @@ function fallbackMarkdownToHTML(mdxContent: string): string {
   // フロントマターを除去
   let html = mdxContent.replace(/^---[\s\S]*?---\n/, "");
 
+  // --- 修正開始 ---
+
+  // リンクとインラインコードを一時的にプレースホルダーに置き換える
+  const placeholders: string[] = [];
+  const placeholder = (type: string, content: string) => {
+    placeholders.push(content);
+    return `__${type}_${placeholders.length - 1}__`;
+  };
+
+  // 既存のリンクをプレースホルダーに置換
+  html = html.replace(/\[([^\]]*)\]\(([^)]*)\)/gim, (match, text, url) => {
+    return placeholder(
+      "LINK",
+      `<a href="${url}" class="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">${text}</a>`
+    );
+  });
+
   // 1. コードブロック処理（最初に実行）
   html = html.replace(
     /```(\w*)\n?([\s\S]*?)```/gim,
@@ -119,7 +136,10 @@ function fallbackMarkdownToHTML(mdxContent: string): string {
   // 2. インラインコード処理（コードブロック処理の直後）
   html = html.replace(/`([^`]+)`/gim, (match, code) => {
     const escapedCode = escapeHtml(code);
-    return `<code class="inline-code bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono text-gray-800 dark:text-gray-200">${escapedCode}</code>`;
+    return placeholder(
+      "INLINE_CODE",
+      `<code class="inline-code bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono text-gray-800 dark:text-gray-200">${escapedCode}</code>`
+    );
   });
 
   // 3. テーブル処理
@@ -184,8 +204,12 @@ function fallbackMarkdownToHTML(mdxContent: string): string {
   html = html.replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>");
   html = html.replace(/\*(.*?)\*/gim, "<em>$1</em>");
 
-  // 6. リンク処理
-  html = html.replace(/\[([^\]]*)\]\(([^)]*)\)/gim, '<a href="$2">$1</a>');
+  // 6. URLの自動リンク化
+  html = html.replace(
+    /(?<!['"=\]\(])\b(https?:\/\/[^\s<>"'()]+)\b/g,
+    (url) =>
+      `<a href="${url}" class="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">${url}</a>`
+  );
 
   // 7. リスト処理
   html = html.replace(/^(\d+\.\s+.*(?:\n\d+\.\s+.*)*)/gim, (match) => {
@@ -225,6 +249,12 @@ function fallbackMarkdownToHTML(mdxContent: string): string {
 
   // 10. 最終的なバッククォートクリーンアップ（全ての処理の後）
   html = html.replace(/`/g, "");
+
+  // プレースホルダーを元のコンテンツに戻す
+  html = html.replace(/__(\w+)_(\d+)__/g, (match, type, indexStr) => {
+    const index = parseInt(indexStr, 10);
+    return placeholders[index] || match;
+  });
 
   return html;
 }
