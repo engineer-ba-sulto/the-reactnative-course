@@ -1,3 +1,4 @@
+import { getBaseUrl } from "@/lib/url-utils";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import { Noto_Sans_JP } from "next/font/google";
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
     template: "%s | React Native Course",
     default: "React Native Course",
   },
+  metadataBase: new URL(getBaseUrl()),
   description: "React Native Course",
 };
 
