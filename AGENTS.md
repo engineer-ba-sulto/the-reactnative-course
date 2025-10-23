@@ -1,21 +1,45 @@
-# AGENTS.md file
+# Next.js Development Rules
 
 ## Technology Stack
+
+### Core Frameworks & Language
 
 - Bun
 - TypeScript
 - Next.js
+
+### UI/Frontend
+
 - Tailwind CSS
 - shadcn/ui
-- React Hook Form
-- Zod
+
+### Backend & Database
+
+- Hono
 - Drizzle
-- Supabase
+- Cloudflare D1
 - Cloudflare Workers
+
+### Tooling & Services
+
 - ESLint
 - Prettier
+- date-fns
+- date-fns-tz
+
+### Authentication & Payments
+
 - Better Auth
 - Stripe
+
+### Forms & Validation
+
+- React Hook Form
+- Zod
+
+### Email
+
+- Resend
 
 ## File Length and Structure
 
@@ -76,53 +100,109 @@ Split into app/, hooks/, utils/, providers/, etc.
 
 ```
 src/
-├── app/
-│   ├── (auth)/
-│   │   ├── login/
-│   │   └── signin/
-│   ├── api/
-│   │   └── auth/
-│   │       └── [...all]/
-│   ├── dashboard/
-│   ├── layout.tsx
-│   ├── page.tsx
-│   ├── globals.css
-│   └── favicon.ico
-├── actions/
-├── components/
-│   └── ui/
-├── db/
-│   ├── schemas/
-│   └── migrations/
-├── hooks/
-├── lib/
-├── types/
-├── zod/
-├── constants/
-└── providers/
+├── app/                   # Next.js App Router: pages, layouts, route handlers
+│   ├── (auth)/            # Route group for authentication pages (e.g., login, register)
+│   │   └── login/
+│   │       └── page.tsx
+│   ├── (marketing)/       # Route group for marketing pages (e.g., landing, pricing)
+│   │   └── page.tsx
+│   ├── (app)/             # Route group for authenticated app pages
+│   │   └── dashboard/
+│   │       └── page.tsx
+│   └── api/               # API routes (Hono on Cloudflare Workers)
+│       └── route.ts
+├── actions/               # Server Actions for data mutations
+├── components/            # Reusable UI components
+│   ├── feature/           # Feature-specific components (e.g., WaitlistForm, UserProfile)
+│   └── ui/                # Generic, reusable UI components from shadcn/ui (e.g., Button, Input)
+├── constants/             # Site-wide constants and configuration
+├── drizzle/               # Drizzle ORM: database client, schema, migrations
+│   ├── migrations/        # Database migration files
+│   ├── schema/            # Drizzle schema definitions
+│   └── db.ts              # Drizzle client instance
+├── hooks/                 # Custom React hooks (e.g., useAuth, use-form-state)
+├── lib/                   # Business logic, helpers, and external service clients
+│   ├── auth/              # Authentication logic (e.g., Better Auth integration)
+│   ├── db/                # Database-related utilities and queries
+│   ├── email/             # Email sending logic (e.g., Resend integration)
+│   ├── stripe/            # Stripe integration logic
+│   ├── utils.ts           # Utility functions (e.g., clsx, tailwind-merge)
+│   └── date.ts            # Date utility functions
+├── providers/             # React Context providers (e.g., ThemeProvider, AuthProvider)
+├── types/                 # TypeScript type definitions
+└── zod/                   # Zod validation schemas
 ```
 
 ## File Naming Conventions
 
-App Router: lowercase, special names
+App Router
 
+- lowercase, special names
 - page.tsx, layout.tsx, template.tsx, loading.tsx, error.tsx
-  Components: PascalCase. Suffix with `.client.tsx` or `.server.tsx` if needed for clarity.
+
+Components
+
+- PascalCase. Suffix with `.client.tsx` or `.server.tsx` if needed for clarity.
 - UserProfile.tsx, ProductCard.tsx, SignInButton.client.tsx
-  Hooks: camelCase, starting with 'use'
+
+Hooks
+
+- camelCase, starting with 'use'
 - useAuth.ts, useApi.ts, useLocalStorage.ts
-  Types: feature name + purpose
+
+Types
+
+- feature name + purpose
 - auth.ts, user.ts, api.ts
-  Utils/Lib: camelCase. Group by feature.
+
+Zod Schemas (Validation)
+
+- camelCase. Suffix with `.schema.ts`. Located in `src/zod/`. Schema objects should be camelCase and suffixed with `Schema`.
+- login.schema.ts, updateUser.schema.ts (defines `loginSchema`, `updateUserSchema`)
+
+Database Schemas (Drizzle)
+
+- camelCase. Suffix with `Schema.ts`. Located in `src/drizzle/schema/`. Tables should be plural camelCase and suffixed with `Table`. Tables should be defined in the schema file.
+- userSchema.ts, productSchema.ts (defines `usersTable`, `productsTable` tables)
+
+Utils/Lib
+
+- camelCase. Group by feature.
 - authUtils.ts, validation.ts, dateFormatting.ts
-  Providers: PascalCase + Provider
+
+Providers
+
+- PascalCase + Provider
 - AuthProvider.tsx, ThemeProvider.tsx
-  Actions: camelCase. Suffix with `.actions.ts`
+
+Actions
+
+- camelCase. Suffix with `.actions.ts`
 - user.ts, product.ts
-  API Routes: route.ts inside `app/api/...` directories.
+
+API Routes
+
+- route.ts inside `app/api/...` directories.
 
 ## Server Action Rules
 
 Server Actions must only be used for data mutations.
 Do not use them for data fetching (queries) or GET requests.
 Their primary purpose is handling form submissions and state updates via startTransition.
+
+## Rules for using Cursor's Plan feature
+
+- First, propose a branch name
+- Do not perform git operations
+
+## Commit Message Rules
+
+Please create commit messages according to the following example.
+Also, write in Japanese.
+
+```
+ユーザー認証時のセッション管理バグを修正
+
+- ログイン後のセッションが正しく保持されない問題を解決
+- セキュリティトークンの有効期限チェックを追加
+```
